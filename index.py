@@ -1,3 +1,4 @@
+"""
 import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QMainWindow
 from PyQt5.QtGui import QPainter, QPen, QImage
@@ -24,3 +25,5 @@ def main(args):
 
 if __name__ == "__main__":
     main(sys.argv)
+"""
+print("clement est degeulasse")
