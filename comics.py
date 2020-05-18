@@ -74,5 +74,11 @@ def is_image(filename):
 
 if __name__ == '__main__':
     comic = COMICParser("spidersurf.cbz")
+<<<<<<< HEAD
     #comic.unzip("Spider-Man Team-Up 02 - silver surfer.cbz", "./Spider-Man Team-Up 02 - silver surfer")
     print(comic.read_book())
+=======
+    comic.unzip("spidersurf.cbz", "./spidersurf")
+
+    print("mange tes morts")
+>>>>>>> bcb8555feab719f7fdaf9f7b6af7a557ea6bd787
