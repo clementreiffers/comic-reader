@@ -75,3 +75,5 @@ def is_image(filename):
 if __name__ == '__main__':
     comic = COMICParser("spidersurf.cbz")
     comic.unzip("spidersurf.cbz", "./spidersurf")
+
+    print("mange tes morts")
