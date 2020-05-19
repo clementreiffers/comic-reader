@@ -48,7 +48,7 @@ class FenetrePrincipale(QMainWindow):
     def bibliotheque(self):
         file = open("biblio.txt", 'r')
         biblio = file.read()
-        T = [[0]]
+        T = [[]]
         a = ''
         lv = 0
         for i in biblio :
@@ -63,6 +63,26 @@ class FenetrePrincipale(QMainWindow):
                 a = ''
                 T.append([])
                 lv+=1
+        info = QVBoxLayout()
+        h = QHBoxLayout()
+        i = 0
+        txt = ''
+        while i< 3:
+            i+=1
+            txt = txt + '\n' + T[0][i]
+
+
+        self.label = QLabel()
+        self.pixmap= QPixmap("./"+str(T[0][1])+ "/" + T[0][0])
+        self.scaledPixmap= self.pixmap.scaledToWidth(self.width() * 0.1)
+        self.label.setPixmap(self.scaledPixmap)
+        info = QLabel(txt)
+        h.addWidget(self.label)
+        h.addWidget(info)
+        widget = QWidget()
+        widget.setLayout(h)
+        self.setCentralWidget(widget)
+
 
 
 
@@ -70,7 +90,6 @@ class FenetrePrincipale(QMainWindow):
         dialogue = QFileDialog()
         self.filename = dialogue.getOpenFileName(self,
                                                     'Ouvrir fichier',
-
                                                     filter='Comic Book Zip (*.cbz);;Comic Book Rar (*.cbr)')[0]
         nom = ""
         for i in self.filename[::-1]:

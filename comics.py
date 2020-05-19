@@ -51,11 +51,11 @@ class COMICParser:
         year = creation_time.split()[-1]
         try :
             file = open("biblio.txt", "a")
-            biblio = file.write(str(title) + "$" + str(cover) + "$" + str(creation_time) + "$" + str(year) + "\n")
+            biblio = file.write(str(cover) + "$" + str(title) + "$" + str(creation_time) + "$" + str(year) + "\n")
             file.close()
         except :
             file = open("biblio.txt", "w")
-            biblio = file.write(str(title) + "$" + str(cover) + "$" + str(creation_time) + "$" + str(year) + "\n")
+            biblio = file.write(str(cover) + "$" + str(title) + "$" + str(creation_time) + "$" + str(year) + "\n")
             file.close()
 
         self._metadata = {"cover":cover, "title": title, "author":author, "year":year, "tags":tags, "quality":quality}
