@@ -7,11 +7,15 @@ class FenetrePrincipale(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle('Première Fenêtre')
+        self.setMinimumSize(500,500)
+        self.setMaximumSize(1700,1000)
         self.filename = ""
+        self.BDtabs = []
+        self.tabs=QTabWidget()
+        self.tabs.setDocumentMode(True)
+        self.tabs.setTabPosition(QTabWidget.North)
+        self.tabs.setMovable(True)
 
-        self.pageLayout = QVBoxLayout()
-        self.buttonLayout = QHBoxLayout()
-        self.stackedLayout = QStackedLayout()
 
         self.toolbar = QToolBar("Bar d'outils")
         self.addToolBar(self.toolbar)
@@ -41,45 +45,25 @@ class FenetrePrincipale(QMainWindow):
 
         self.ouvrir.setShortcut(QKeySequence("ctrl+o"))
         #self.ouvrir.setShortcut(QKeySequence("ctrl+o"))
-        self.app()
-    def app(self):
-        if self.filename != "" :
 
-            self.livre = c.COMICParser(self.filename)
-            self.liste = self.livre.read_book()
-
-            for i in self.liste :
-                self.label = QLabel()
-                self.pixmap= QPixmap("./"+self.livre.name + "/" + i)
-                self.scaledPixmap= self.pixmap.scaledToWidth(self.width() * 0.5)  # Pour prendre 80 % de la largeur
-                self.label.setPixmap(self.scaledPixmap)
-                self.stackedLayout.addWidget(self.label)
-
-            self.pageLayout.addLayout(self.stackedLayout)
-            self.pageLayout.addLayout(self.buttonLayout) #ajout d'une première sous disposition à pageLayout
-
-            self.widgetCentral = QWidget()
-            self.widgetCentral.setLayout(self.pageLayout)
-            self.setCentralWidget(self.widgetCentral)
-
-            #Remplissage des sous-dispositions
-            self.previousnext = ['Previous', 'Next']
-            self.pos = 0
-            for pn in self.previousnext:
-                btn = QPushButton(pn)
-                btn.clicked.connect(self.changerPage)
-                self.buttonLayout.addWidget(btn)
-
-    @pyqtSlot()
-    def changerPage(self):
-        texte = self.sender().text()
-        if texte == 'Next':
-            if self.pos ==3: self.pos = 0
-            else:   self.pos+=1
-        else :
-            if self.pos == 0: self.pos = 3
-            else :  self.pos-=1
-        self.stackedLayout.setCurrentIndex(self.pos)
+    def afficher_onglets(self):
+        self.tabs=QTabWidget()
+        self.tabs.setDocumentMode(True)
+        self.tabs.setTabPosition(QTabWidget.East)
+        self.tabs.setMovable(True)
+        #self.colors=['red','green','blue','yellow']
+        print(self.BDtabs)
+        for i in self.BDtabs:
+            # On ajoute le widget directement
+            # AVEC son élément de tableau
+            self.tabs.addTab(page(i),i)
+            self.setCentralWidget(self.tabs)
+            app =QCoreApplication.instance()
+            if app is None:
+                app =QApplication(sys.argv)
+                window=Fenetre()
+                window.show()
+                app.exec_()
 
     def charger(self):
         dialogue = QFileDialog()
@@ -92,25 +76,62 @@ class FenetrePrincipale(QMainWindow):
             if i == "/" : break
             nom += i
         self.filename = nom[::-1]
+        self.BDtabs.append(self.filename)
+        self.afficher_onglets()
 
-        self.app()
-        """
-        if self.filename == ('',''):
-            print('Nom de fichier vide.')
-            return
+class page(QMainWindow):
+    def __init__(self, nom):
+        super().__init__()
+        self.pageLayout = QVBoxLayout()
+        self.buttonLayout = QHBoxLayout()
+        self.stackedLayout = QStackedLayout()
+        self.pageLayout.addLayout(self.stackedLayout)
+        self.pageLayout.addLayout(self.buttonLayout) #ajout d'une première sous disposition à pageLayout
+        self.livre = c.COMICParser(nom)
+        print(nom)
+        self.liste = self.livre.read_book()
+        for i in self.liste :
+            self.label = QLabel()
+            self.pixmap= QPixmap("./"+self.livre.name + "/" + i)
 
-        fichier = QFile(self.filename)
-        ok = fichier.open(QFile.ReadOnly)
+            self.scaledPixmap= self.pixmap.scaledToWidth(self.width() * 0.5)  # Pour prendre 80 % de la largeur
+            self.label.setPixmap(self.scaledPixmap)
 
-        if ok:
-            print('Le fichier de sauvegarde à été chargé.')
-            flux = QTextStream(fichier)
-            texte = flux.readAll()
-            self.textEdit.setText(texte)
-            fichier.close()
-        else:
-            print('Le fichier de sauvegarde n\'a pas pu être chargé.')
-        """
+            self.stackedLayout.addWidget(self.label)
+
+        self.widget = QWidget()
+        self.widget.setLayout(self.pageLayout)
+        self.setCentralWidget(self.widget)
+        #Remplissage des sous-dispositions
+        self.pos = 0
+
+        self.previous = QPushButton('Previous')
+        self.previous.clicked.connect(self.changerPage)
+        self.buttonLayout.addWidget(self.previous)
+
+        self.next = QPushButton('Next')
+        self.next.clicked.connect(self.changerPage)
+        self.buttonLayout.addWidget(self.next)
+
+    @pyqtSlot()
+    def changerPage(self):
+        texte = self.sender().text()
+        if texte == 'Next':
+            if self.pos == len(self.liste):
+                self.next.setEnabled(False)
+            else:
+                self.next.setEnabled(True)
+
+                self.pos+=1
+        else :
+            if self.pos ==0:
+                self.previous.setEnabled(False)
+            else :
+                self.previous.setEnabled(True)
+
+                self.pos-=1
+
+        self.stackedLayout.setCurrentIndex(self.pos)
 
 
 #ces trois lignes c'est pour que ça fonctionne avec spyder
