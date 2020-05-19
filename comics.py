@@ -45,12 +45,18 @@ class COMICParser:
 
     def generate_metadata(self, author='<Unknown>', isbn = None, tags=[], quality=0):
         title = os.path.basename(self.book_extension[0]).strip(' ')
-        cover = self.book.read(self.image_list[0])
+        cover = self.image_list[0]
 
         creation_time = time.ctime(os.path.getctime(self.filename))
         year = creation_time.split()[-1]
-
-        """NOTE: C'est ici qu'il serait malin d'enregister les informations dans un fichier..."""
+        try :
+            file = open("biblio.txt", "a")
+            biblio = file.write(str(title) + "$" + str(cover) + "$" + str(creation_time) + "$" + str(year) + "\n")
+            file.close()
+        except :
+            file = open("biblio.txt", "w")
+            biblio = file.write(str(title) + "$" + str(cover) + "$" + str(creation_time) + "$" + str(year) + "\n")
+            file.close()
 
         self._metadata = {"cover":cover, "title": title, "author":author, "year":year, "tags":tags, "quality":quality}
         return self._metadata
@@ -78,3 +84,8 @@ def is_image(filename):
         return True
     else:
         return False
+
+if __name__ == '__main__':
+    livre = COMICParser("spidersurf.cbz")
+    livre.read_book()
+    livre.generate_metadata()

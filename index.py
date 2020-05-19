@@ -6,9 +6,7 @@ import comics as c
 class FenetrePrincipale(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle('Première Fenêtre')
-        self.setMinimumSize(500,500)
-        self.setMaximumSize(1700,1000)
+        self.setWindowTitle('Liseuse')
         self.filename = ""
         self.BDtabs = []
 
@@ -36,22 +34,37 @@ class FenetrePrincipale(QMainWindow):
         self.menuAide = self.barreDeMenu.addMenu("&Aide")
         self.menuAide.addSeparator()
 
-
         self.ouvrir.setShortcut(QKeySequence("ctrl+o"))
+
+        self.bibliotheque()
 
     def afficher_onglets(self):
         self.tabs=QTabWidget()
         self.tabs.setTabPosition(QTabWidget.North)
-        print(self.BDtabs)
         for i in self.BDtabs:
             self.tabs.addTab(page(i),i)
             self.setCentralWidget(self.tabs)
-            app =QCoreApplication.instance()
-            if app is None:
-                app =QApplication(sys.argv)
-                window=Fenetre()
-                window.show()
-                app.exec_()
+
+    def bibliotheque(self):
+        file = open("biblio.txt", 'r')
+        biblio = file.read()
+        T = [[0]]
+        a = ''
+        lv = 0
+        for i in biblio :
+            a+= i
+            if i =='$':
+                a = a[0:-1]
+                T[lv].append(a)
+                a = ''
+            if i == "\n":
+                a = a[0:-1]
+                T[lv].append(a)
+                a = ''
+                T.append([])
+                lv+=1
+
+
 
     def charger(self):
         dialogue = QFileDialog()
@@ -70,19 +83,23 @@ class FenetrePrincipale(QMainWindow):
 class page(QMainWindow):
     def __init__(self, nom):
         super().__init__()
+        self.size = 0.7
+        self.livre = c.COMICParser(nom)
+        self.pos = 0
+
+
+        self.app()
+    def app(self):
         self.pageLayout = QVBoxLayout()
         self.buttonLayout = QHBoxLayout()
         self.stackedLayout = QStackedLayout()
         self.pageLayout.addLayout(self.stackedLayout)
         self.pageLayout.addLayout(self.buttonLayout) #ajout d'une première sous disposition à pageLayout
-        self.livre = c.COMICParser(nom)
-        print(nom)
         self.liste = self.livre.read_book()
         for i in self.liste :
             self.label = QLabel()
             self.pixmap= QPixmap("./"+self.livre.name + "/" + i)
-
-            self.scaledPixmap= self.pixmap.scaledToWidth(self.width() * 0.5)  # Pour prendre 80 % de la largeur
+            self.scaledPixmap= self.pixmap.scaledToWidth(self.width() * self.size)
             self.label.setPixmap(self.scaledPixmap)
 
             self.stackedLayout.addWidget(self.label)
@@ -90,7 +107,6 @@ class page(QMainWindow):
         self.widget = QWidget()
         self.widget.setLayout(self.pageLayout)
         self.setCentralWidget(self.widget)
-        self.pos = 0
 
         self.previous = QPushButton('Previous')
         self.previous.clicked.connect(self.changerPage)
@@ -103,6 +119,16 @@ class page(QMainWindow):
         self.buttonLayout.addWidget(self.next)
         self.next.setEnabled(True)
 
+        self.plus = QPushButton('+')
+        self.plus.clicked.connect(self.zoom)
+        self.buttonLayout.addWidget(self.plus)
+        self.plus.setEnabled(True)
+
+        self.moins = QPushButton('-')
+        self.moins.clicked.connect(self.zoom)
+        self.buttonLayout.addWidget(self.moins)
+        self.moins.setEnabled(True)
+
 
     @pyqtSlot()
     def changerPage(self):
@@ -110,25 +136,39 @@ class page(QMainWindow):
         if texte == 'Next':
             if self.pos == len(self.liste)-1:
                 self.previous.setEnabled(True)
-
                 self.next.setEnabled(False)
             else:
-                self.previous.setEnabled(False)
-
+                self.previous.setEnabled(True)
                 self.next.setEnabled(True)
-
                 self.pos+=1
         else :
             if self.pos ==0:
                 self.next.setEnabled(True)
-
                 self.previous.setEnabled(False)
             else :
                 self.previous.setEnabled(True)
+                self.next.setEnabled(True)
 
                 self.pos-=1
-
         self.stackedLayout.setCurrentIndex(self.pos)
+    def zoom(self):
+        texte = self.sender().text()
+        if texte == '+':
+            if self.size == 0.9:
+                self.moins.setEnabled(True)
+                self.plus.setEnabled(False)
+            else:
+                self.moins.setEnabled(False)
+                self.plus.setEnabled(True)
+                self.size+=0.125
+        else :
+            if self.size ==0:
+                self.plus.setEnabled(True)
+                self.moins.setEnabled(False)
+            else :
+                self.moins.setEnabled(True)
+                self.size-=0.125
+        self.app()
 
 
 app = QCoreApplication.instance()
