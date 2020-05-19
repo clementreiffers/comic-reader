@@ -108,23 +108,33 @@ class page(QMainWindow):
         self.previous = QPushButton('Previous')
         self.previous.clicked.connect(self.changerPage)
         self.buttonLayout.addWidget(self.previous)
+        self.previous.setEnabled(False)
+
 
         self.next = QPushButton('Next')
         self.next.clicked.connect(self.changerPage)
         self.buttonLayout.addWidget(self.next)
+        self.next.setEnabled(True)
+
 
     @pyqtSlot()
     def changerPage(self):
         texte = self.sender().text()
         if texte == 'Next':
-            if self.pos == len(self.liste):
+            if self.pos == len(self.liste)-1:
+                self.previous.setEnabled(True)
+
                 self.next.setEnabled(False)
             else:
+                self.previous.setEnabled(False)
+
                 self.next.setEnabled(True)
 
                 self.pos+=1
         else :
             if self.pos ==0:
+                self.next.setEnabled(True)
+
                 self.previous.setEnabled(False)
             else :
                 self.previous.setEnabled(True)
