@@ -20,7 +20,12 @@ class COMICParser:
         self._metadata = {}
 
     def read_book(self):
+        self.name = ""
+        for i in self.filename:
+            if i == ".":    break
+            self.name += i
         if self.book_extension[1] == '.cbz':
+            self.unzip(self.filename, self.name)
             self.book = zipfile.ZipFile(
                 self.filename, mode='r', allowZip64=True)
             self.image_list = [
@@ -28,6 +33,8 @@ class COMICParser:
                 if not i.is_dir() and is_image(i.filename)]
 
         elif self.book_extension[1] == '.cbr':
+            self.unrar(self.filename, self.name)
+
             self.book = rarfile.RarFile(self.filename)
             self.image_list = [
                 i.filename for i in self.book.infolist()
