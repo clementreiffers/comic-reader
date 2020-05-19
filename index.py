@@ -11,11 +11,6 @@ class FenetrePrincipale(QMainWindow):
         self.setMaximumSize(1700,1000)
         self.filename = ""
         self.BDtabs = []
-        self.tabs=QTabWidget()
-        self.tabs.setDocumentMode(True)
-        self.tabs.setTabPosition(QTabWidget.North)
-        self.tabs.setMovable(True)
-
 
         self.toolbar = QToolBar("Bar d'outils")
         self.addToolBar(self.toolbar)
@@ -23,7 +18,6 @@ class FenetrePrincipale(QMainWindow):
         self.ouvrir = QAction("Ouvrir", self)
         self.ouvrir.triggered.connect(self.charger)
         self.ouvrir.setStatusTip("Pour ouvrir un fichier")
-        #self.ouvrir.setIcon(QIcon("editer.png"))
 
         self.barreDeMenu = self.menuBar()
         self.menuFichier = self.barreDeMenu.addMenu("&Fichier")
@@ -44,18 +38,12 @@ class FenetrePrincipale(QMainWindow):
 
 
         self.ouvrir.setShortcut(QKeySequence("ctrl+o"))
-        #self.ouvrir.setShortcut(QKeySequence("ctrl+o"))
 
     def afficher_onglets(self):
         self.tabs=QTabWidget()
-        self.tabs.setDocumentMode(True)
-        self.tabs.setTabPosition(QTabWidget.East)
-        self.tabs.setMovable(True)
-        #self.colors=['red','green','blue','yellow']
+        self.tabs.setTabPosition(QTabWidget.North)
         print(self.BDtabs)
         for i in self.BDtabs:
-            # On ajoute le widget directement
-            # AVEC son élément de tableau
             self.tabs.addTab(page(i),i)
             self.setCentralWidget(self.tabs)
             app =QCoreApplication.instance()
@@ -102,7 +90,6 @@ class page(QMainWindow):
         self.widget = QWidget()
         self.widget.setLayout(self.pageLayout)
         self.setCentralWidget(self.widget)
-        #Remplissage des sous-dispositions
         self.pos = 0
 
         self.previous = QPushButton('Previous')
@@ -144,7 +131,6 @@ class page(QMainWindow):
         self.stackedLayout.setCurrentIndex(self.pos)
 
 
-#ces trois lignes c'est pour que ça fonctionne avec spyder
 app = QCoreApplication.instance()
 if app == None:
     app = QApplication([''])
