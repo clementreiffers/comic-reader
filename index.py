@@ -41,6 +41,8 @@ class FenetrePrincipale(QMainWindow):
     def afficher_onglets(self):
         self.tabs=QTabWidget()
         self.tabs.setTabPosition(QTabWidget.North)
+        self.tabs.setTabsClosable(True)
+
         for i in self.BDtabs:
             self.tabs.addTab(page(i),i)
             self.setCentralWidget(self.tabs)
