@@ -39,8 +39,8 @@ class COMICParser:
             self.image_list = [
                 i.filename for i in self.book.infolist()
                 if not i.isdir() and is_image(i.filename)]
-
-        self.image_list.sort()
+        print(self.image_list)
+        #self.image_list.sort()
         return self.image_list
 
 
@@ -58,14 +58,13 @@ class COMICParser:
                 if src == T[a][1]:
                     etat = True
                 a+=1
-            print(etat)
             if etat == False :
                 file = open("biblio.txt", "a")
-                biblio = file.write(str(cover) + "$" + str(src) + "$" + str(title) + "$" + str(author) + "$" + str(creation_time) + "$" + str(year) + "\n")
+                biblio = file.write(str(cover) + "$" + str(src) + "$" + str(title) + "$" + str(author) + "$" + str(creation_time) + "$" + str(year) + "$" + str(tags) + "$" + str(quality) + "\n")
                 file.close()
         except :
             file = open("biblio.txt", "w")
-            biblio = file.write(str(cover) + "$" + str(src) + "$" + str(title) + "$" + str(author) + "$" + str(creation_time) + "$" + str(year) + "\n")
+            biblio = file.write(str(cover) + "$" + str(src) + "$" + str(title) + "$" + str(author) + "$" + str(creation_time) + "$" + str(year) + "$" + str(tags) + "$" + str(quality) + "\n")
             file.close()
 
         self._metadata = {"cover":cover, "title": title, "author":author, "year":year, "tags":tags, "quality":quality}
@@ -116,6 +115,6 @@ def lire_bibliotheque():
     return T
 
 if __name__ == '__main__':
-    livre = COMICParser("spidersurf.cbz")
+    livre = COMICParser("C:/Users/clement/OneDrive - ESME/prépa/semestre 4/IHM/projet final/IHM_projet_final/spidersurf.cbz")
     livre.read_book()
     livre.generate_metadata()

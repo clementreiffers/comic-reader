@@ -7,7 +7,7 @@ class FenetrePrincipale(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle('Liseuse')
-        self.setGeometry(200, 200, 850, 500)
+        self.setGeometry(200, 200, 1035, 500)
 
         self.filename = ""
         self.BDtabs = []
@@ -77,7 +77,7 @@ class FenetrePrincipale(QMainWindow):
         return T
     def afficher_biblio(self, T):
         self.tableWidget = QTableWidget()
-        self.tableWidget.setColumnCount(8)
+        self.tableWidget.setColumnCount(11)
         self.tableWidget.setRowCount(len(T))
 
         self.tableWidget.setItem(0, 0, QTableWidgetItem("cover"))
@@ -86,16 +86,15 @@ class FenetrePrincipale(QMainWindow):
         self.tableWidget.setItem(0, 3 , QTableWidgetItem("author"))
         self.tableWidget.setItem(0, 4 , QTableWidgetItem("creation_time"))
         self.tableWidget.setItem(0, 5 , QTableWidgetItem("year"))
+        self.tableWidget.setItem(0, 6 , QTableWidgetItem("tags"))
+        self.tableWidget.setItem(0, 7 , QTableWidgetItem("quality"))
+        self.tableWidget.setItem(0, 8 , QTableWidgetItem("ouvrir"))
+        self.tableWidget.setItem(0, 9 , QTableWidgetItem("editer"))
+        self.tableWidget.setItem(0, 10 , QTableWidgetItem("delete"))
         header = self.tableWidget.verticalHeader()
         for i in range(len(T)-1):
-            for j in range(len(T[i])+2):
+            for j in range(len(T[i])+10):
                 if j == 0 :
-                    """
-                    icon = QIcon(QPixmap("./"+str(T[i][2])+ "/" + T[i][0]))
-                    item = QTableWidgetItem(icon, "")
-                    self.tableWidget.setItem(i+1, j, item)
-                    self.tableWidget.setColumnWidth(200, 200)
-                    """
                     info = QVBoxLayout()
                     h = QHBoxLayout()
                     n = 0
@@ -113,13 +112,22 @@ class FenetrePrincipale(QMainWindow):
                     header.setSectionResizeMode(i+1, QHeaderView.Stretch)
 
 
+                elif j == len(T)+5:
+                    self.btn = QPushButton("lire\n" + str(T[i][2]))
+                    self.btn.clicked.connect(self.lire)
+                    self.tableWidget.setCellWidget(i+1, j, self.btn)
 
+                elif j == len(T)+6:
+                    self.btn = QPushButton("editer")
+                    #self.btn.clicked.connect(self.editer)
+                    self.tableWidget.setCellWidget(i+1, j, self.btn)
 
-                elif j>len(T)+2:
-                    icon = QPushButton("truc")
-                    self.tableWidget.setCellWidget(i+1, j, icon)
+                elif j >= len(T)+7:
+                    self.btn = QPushButton("delete")
+                    #self.btn.clicked.connect(self.delete)
+                    self.tableWidget.setCellWidget(i+1, j, self.btn)
 
-                else :
+                elif j<len(T)+4:
                     self.tableWidget.setItem(i+1, j, QTableWidgetItem(T[i][j]))
 
             self.vBoxLayout = QVBoxLayout()
@@ -128,41 +136,31 @@ class FenetrePrincipale(QMainWindow):
             widget.setLayout(self.vBoxLayout)
             self.setCentralWidget(widget)
 
-        """
-        info = QVBoxLayout()
-        h = QHBoxLayout()
-        i = 0
-        txt = ''
-        while i< 5:
-            i+=1
-            txt = txt + '\n' + T[0][i]
-
-        self.label = QLabel()
-        self.pixmap= QPixmap("./"+str(T[0][2])+ "/" + T[0][0])
-        self.scaledPixmap= self.pixmap.scaledToWidth(self.width() * 0.1)
-        self.label.setPixmap(self.scaledPixmap)
-        info = QLabel(txt)
-        h.addWidget(self.label)
-        h.addWidget(info)
-        widget = QWidget()
-        widget.setLayout(h)
-        self.setCentralWidget(widget)
-        """
-
-
-
-
     def charger(self):
         dialogue = QFileDialog()
-        self.filename = dialogue.getOpenFileName(self,
-                                                    'Ouvrir fichier',
-                                                    filter='Comic Book Zip (*.cbz);;Comic Book Rar (*.cbr)')[0]
-
+        self.filename = dialogue.getOpenFileName(self,'Ouvrir fichier',filter='Comic Book Zip (*.cbz);;Comic Book Rar (*.cbr)')[0]
         livre = c.COMICParser(self.filename)
         livre.read_book()
         livre.generate_metadata(author='<Unknown>', isbn = None, tags=[], quality=0, src=self.filename)
         self.BDtabs.append(self.filename)
         self.afficher_onglets()
+
+    def lire(self):
+        texte = self.sender().text()
+        self.filename = texte[5:len(texte)]
+        T = self.lire_bibliotheque()
+        for i in T :
+            for j in i :
+                if j == self.filename :
+                    emplacement = T[T.index(i)][1]
+                    break
+        print(emplacement)
+        livre = c.COMICParser("C:/Users/clement/OneDrive - ESME/prépa/semestre 4/IHM/projet final/IHM_projet_final/spidersurf.cbz")
+        livre.read_book()
+        self.BDtabs.append(emplacement)
+        self.afficher_onglets()
+
+
 
 class page(QMainWindow):
     def __init__(self, nom):
