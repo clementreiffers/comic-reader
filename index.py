@@ -43,8 +43,14 @@ class FenetrePrincipale(QMainWindow):
         self.tabs.setTabPosition(QTabWidget.North)
         self.tabs.setTabsClosable(True)
 
+        nom = ""
+        for i in self.filename[::-1]:
+            if i == "/" : break
+            nom += i
+        nom = nom[::-1]
+
         for i in self.BDtabs:
-            self.tabs.addTab(page(i),i)
+            self.tabs.addTab(page(i), nom[0:-4])
             self.setCentralWidget(self.tabs)
 
     def bibliotheque(self):
@@ -93,11 +99,7 @@ class FenetrePrincipale(QMainWindow):
         self.filename = dialogue.getOpenFileName(self,
                                                     'Ouvrir fichier',
                                                     filter='Comic Book Zip (*.cbz);;Comic Book Rar (*.cbr)')[0]
-        nom = ""
-        for i in self.filename[::-1]:
-            if i == "/" : break
-            nom += i
-        self.filename = nom[::-1]
+
         self.BDtabs.append(self.filename)
         self.afficher_onglets()
 
@@ -119,7 +121,8 @@ class page(QMainWindow):
         self.liste = self.livre.read_book()
         for i in self.liste :
             self.label = QLabel()
-            self.pixmap= QPixmap("./"+self.livre.name + "/" + i)
+            self.pixmap= QPixmap(self.livre.name + "/" + i)
+            print(self.livre.name + "/" + i)
             self.scaledPixmap= self.pixmap.scaledToWidth(self.width() * self.size)
             self.label.setPixmap(self.scaledPixmap)
 
