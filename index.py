@@ -7,6 +7,8 @@ class FenetrePrincipale(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle('Liseuse')
+        self.setGeometry(200, 200, 850, 500)
+
         self.filename = ""
         self.BDtabs = []
 
@@ -36,7 +38,8 @@ class FenetrePrincipale(QMainWindow):
 
         self.ouvrir.setShortcut(QKeySequence("ctrl+o"))
 
-        self.bibliotheque()
+        self.biblio = self.lire_bibliotheque()
+        self.afficher_biblio(self.biblio)
 
     def afficher_onglets(self):
         self.tabs=QTabWidget()
@@ -53,7 +56,7 @@ class FenetrePrincipale(QMainWindow):
             self.tabs.addTab(page(i), nom[0:-4])
             self.setCentralWidget(self.tabs)
 
-    def bibliotheque(self):
+    def lire_bibliotheque(self):
         file = open("biblio.txt", 'r')
         biblio = file.read()
         T = [[]]
@@ -71,17 +74,71 @@ class FenetrePrincipale(QMainWindow):
                 a = ''
                 T.append([])
                 lv+=1
+        return T
+    def afficher_biblio(self, T):
+        self.tableWidget = QTableWidget()
+        self.tableWidget.setColumnCount(8)
+        self.tableWidget.setRowCount(len(T))
+
+        self.tableWidget.setItem(0, 0, QTableWidgetItem("cover"))
+        self.tableWidget.setItem(0, 1, QTableWidgetItem("source"))
+        self.tableWidget.setItem(0, 2, QTableWidgetItem("title"))
+        self.tableWidget.setItem(0, 3 , QTableWidgetItem("author"))
+        self.tableWidget.setItem(0, 4 , QTableWidgetItem("creation_time"))
+        self.tableWidget.setItem(0, 5 , QTableWidgetItem("year"))
+        header = self.tableWidget.verticalHeader()
+        for i in range(len(T)-1):
+            for j in range(len(T[i])+2):
+                if j == 0 :
+                    """
+                    icon = QIcon(QPixmap("./"+str(T[i][2])+ "/" + T[i][0]))
+                    item = QTableWidgetItem(icon, "")
+                    self.tableWidget.setItem(i+1, j, item)
+                    self.tableWidget.setColumnWidth(200, 200)
+                    """
+                    info = QVBoxLayout()
+                    h = QHBoxLayout()
+                    n = 0
+                    txt = ''
+                    self.label = QLabel()
+                    self.pixmap= QPixmap("./"+str(T[0][2])+ "/" + T[0][0])
+                    self.scaledPixmap= self.pixmap.scaledToWidth(self.width() * 0.1)
+                    self.label.setPixmap(self.scaledPixmap)
+                    info = QLabel(txt)
+                    h.addWidget(self.label)
+                    h.addWidget(info)
+                    widget = QWidget()
+                    widget.setLayout(h)
+                    self.tableWidget.setCellWidget(i+1, j, widget)
+                    header.setSectionResizeMode(i+1, QHeaderView.Stretch)
+
+
+
+
+                elif j>len(T)+2:
+                    icon = QPushButton("truc")
+                    self.tableWidget.setCellWidget(i+1, j, icon)
+
+                else :
+                    self.tableWidget.setItem(i+1, j, QTableWidgetItem(T[i][j]))
+
+            self.vBoxLayout = QVBoxLayout()
+            self.vBoxLayout.addWidget(self.tableWidget)
+            widget = QWidget()
+            widget.setLayout(self.vBoxLayout)
+            self.setCentralWidget(widget)
+
+        """
         info = QVBoxLayout()
         h = QHBoxLayout()
         i = 0
         txt = ''
-        while i< 3:
+        while i< 5:
             i+=1
             txt = txt + '\n' + T[0][i]
 
-
         self.label = QLabel()
-        self.pixmap= QPixmap("./"+str(T[0][1])+ "/" + T[0][0])
+        self.pixmap= QPixmap("./"+str(T[0][2])+ "/" + T[0][0])
         self.scaledPixmap= self.pixmap.scaledToWidth(self.width() * 0.1)
         self.label.setPixmap(self.scaledPixmap)
         info = QLabel(txt)
@@ -90,6 +147,7 @@ class FenetrePrincipale(QMainWindow):
         widget = QWidget()
         widget.setLayout(h)
         self.setCentralWidget(widget)
+        """
 
 
 
@@ -100,6 +158,9 @@ class FenetrePrincipale(QMainWindow):
                                                     'Ouvrir fichier',
                                                     filter='Comic Book Zip (*.cbz);;Comic Book Rar (*.cbr)')[0]
 
+        livre = c.COMICParser(self.filename)
+        livre.read_book()
+        livre.generate_metadata(author='<Unknown>', isbn = None, tags=[], quality=0, src=self.filename)
         self.BDtabs.append(self.filename)
         self.afficher_onglets()
 
@@ -122,7 +183,6 @@ class page(QMainWindow):
         for i in self.liste :
             self.label = QLabel()
             self.pixmap= QPixmap(self.livre.name + "/" + i)
-            print(self.livre.name + "/" + i)
             self.scaledPixmap= self.pixmap.scaledToWidth(self.width() * self.size)
             self.label.setPixmap(self.scaledPixmap)
 
