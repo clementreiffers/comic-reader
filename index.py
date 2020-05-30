@@ -185,7 +185,8 @@ class page(QMainWindow):
             self.label.setPixmap(self.scaledPixmap)
 
             self.stackedLayout.addWidget(self.label)
-
+       
+        
         self.widget = QWidget()
         self.widget.setLayout(self.pageLayout)
         self.setCentralWidget(self.widget)
@@ -194,7 +195,13 @@ class page(QMainWindow):
         self.previous.clicked.connect(self.changerPage)
         self.buttonLayout.addWidget(self.previous)
         self.previous.setEnabled(False)
-
+        
+        
+        self.spin = QSpinBox()
+        self.spin.setMaximum(len(self.liste)-1)
+        self.spin.setMinimum(0)
+        self.spin.valueChanged.connect(self.changerPage)
+        self.buttonLayout.addWidget(self.spin)
 
         self.next = QPushButton('Next')
         self.next.clicked.connect(self.changerPage)
@@ -219,11 +226,13 @@ class page(QMainWindow):
             if self.pos == len(self.liste)-1:
                 self.previous.setEnabled(True)
                 self.next.setEnabled(False)
+                
             else:
                 self.previous.setEnabled(True)
                 self.next.setEnabled(True)
                 self.pos+=1
-        else :
+            self.spin.setValue(self.spin.value()+1)
+        elif texte == 'Previous' :
             if self.pos ==0:
                 self.next.setEnabled(True)
                 self.previous.setEnabled(False)
@@ -232,6 +241,8 @@ class page(QMainWindow):
                 self.next.setEnabled(True)
 
                 self.pos-=1
+            self.spin.setValue(self.spin.value()-1)
+        self.pos = self.spin.value()
         self.stackedLayout.setCurrentIndex(self.pos)
     def zoom(self):
         texte = self.sender().text()
