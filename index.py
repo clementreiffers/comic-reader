@@ -10,7 +10,12 @@ class FenetrePrincipale(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle('Liseuse')
+
         self.setWindowIcon(QtGui.QIcon('spidermanicon.png'))
+
+        self.setGeometry(200, 200, 1035, 500)
+
+
         self.filename = ""
         self.BDtabs = []
 
@@ -41,18 +46,25 @@ class FenetrePrincipale(QMainWindow):
 
         self.ouvrir.setShortcut(QKeySequence("ctrl+o"))
 
-        self.bibliotheque()
+        self.biblio = self.lire_bibliotheque()
+        self.afficher_biblio(self.biblio)
 
     def afficher_onglets(self):
         self.tabs=QTabWidget()
         self.tabs.setTabPosition(QTabWidget.North)
         self.tabs.setTabsClosable(True)
 
+        nom = ""
+        for i in self.filename[::-1]:
+            if i == "/" : break
+            nom += i
+        nom = nom[::-1]
+
         for i in self.BDtabs:
-            self.tabs.addTab(page(i),i)
+            self.tabs.addTab(page(i), nom[0:-4])
             self.setCentralWidget(self.tabs)
 
-    def bibliotheque(self):
+    def lire_bibliotheque(self):
         file = open("biblio.txt", 'r')
         biblio = file.read()
         T = [[]]
@@ -70,41 +82,93 @@ class FenetrePrincipale(QMainWindow):
                 a = ''
                 T.append([])
                 lv+=1
-        info = QVBoxLayout()
-        h = QHBoxLayout()
-        i = 0
-        txt = ''
-        while i< 3:
-            i+=1
-            txt = txt + '\n' + T[0][i]
+        return T
+    def afficher_biblio(self, T):
+        self.tableWidget = QTableWidget()
+        self.tableWidget.setColumnCount(11)
+        self.tableWidget.setRowCount(len(T))
+
+        self.tableWidget.setItem(0, 0, QTableWidgetItem("cover"))
+        self.tableWidget.setItem(0, 1, QTableWidgetItem("source"))
+        self.tableWidget.setItem(0, 2, QTableWidgetItem("title"))
+        self.tableWidget.setItem(0, 3 , QTableWidgetItem("author"))
+        self.tableWidget.setItem(0, 4 , QTableWidgetItem("creation_time"))
+        self.tableWidget.setItem(0, 5 , QTableWidgetItem("year"))
+        self.tableWidget.setItem(0, 6 , QTableWidgetItem("tags"))
+        self.tableWidget.setItem(0, 7 , QTableWidgetItem("quality"))
+        self.tableWidget.setItem(0, 8 , QTableWidgetItem("ouvrir"))
+        self.tableWidget.setItem(0, 9 , QTableWidgetItem("editer"))
+        self.tableWidget.setItem(0, 10 , QTableWidgetItem("delete"))
+        header = self.tableWidget.verticalHeader()
+        for i in range(len(T)-1):
+            for j in range(len(T[i])+10):
+                if j == 0 :
+                    info = QVBoxLayout()
+                    h = QHBoxLayout()
+                    n = 0
+                    txt = ''
+                    self.label = QLabel()
+                    self.pixmap= QPixmap("./"+str(T[0][2])+ "/" + T[0][0])
+                    self.scaledPixmap= self.pixmap.scaledToWidth(self.width() * 0.1)
+                    self.label.setPixmap(self.scaledPixmap)
+                    info = QLabel(txt)
+                    h.addWidget(self.label)
+                    h.addWidget(info)
+                    widget = QWidget()
+                    widget.setLayout(h)
+                    self.tableWidget.setCellWidget(i+1, j, widget)
+                    header.setSectionResizeMode(i+1, QHeaderView.Stretch)
 
 
-        self.label = QLabel()
-        self.pixmap= QPixmap("./"+str(T[0][1])+ "/" + T[0][0])
-        self.scaledPixmap= self.pixmap.scaledToWidth(self.width() * 0.1)
-        self.label.setPixmap(self.scaledPixmap)
-        info = QLabel(txt)
-        h.addWidget(self.label)
-        h.addWidget(info)
-        widget = QWidget()
-        widget.setLayout(h)
-        self.setCentralWidget(widget)
+                elif j == len(T)+5:
+                    self.btn = QPushButton("lire\n" + str(T[i][2]))
+                    self.btn.clicked.connect(self.lire)
+                    self.tableWidget.setCellWidget(i+1, j, self.btn)
 
+                elif j == len(T)+6:
+                    self.btn = QPushButton("editer")
+                    #self.btn.clicked.connect(self.editer)
+                    self.tableWidget.setCellWidget(i+1, j, self.btn)
 
+                elif j >= len(T)+7:
+                    self.btn = QPushButton("delete")
+                    #self.btn.clicked.connect(self.delete)
+                    self.tableWidget.setCellWidget(i+1, j, self.btn)
 
+                elif j<len(T)+4:
+                    self.tableWidget.setItem(i+1, j, QTableWidgetItem(T[i][j]))
+
+            self.vBoxLayout = QVBoxLayout()
+            self.vBoxLayout.addWidget(self.tableWidget)
+            widget = QWidget()
+            widget.setLayout(self.vBoxLayout)
+            self.setCentralWidget(widget)
 
     def charger(self):
         dialogue = QFileDialog()
-        self.filename = dialogue.getOpenFileName(self,
-                                                    'Ouvrir fichier',
-                                                    filter='Comic Book Zip (*.cbz);;Comic Book Rar (*.cbr)')[0]
-        nom = ""
-        for i in self.filename[::-1]:
-            if i == "/" : break
-            nom += i
-        self.filename = nom[::-1]
+        self.filename = dialogue.getOpenFileName(self,'Ouvrir fichier',filter='Comic Book Zip (*.cbz);;Comic Book Rar (*.cbr)')[0]
+        livre = c.COMICParser(self.filename)
+        livre.read_book()
+        livre.generate_metadata(author='<Unknown>', isbn = None, tags=[], quality=0, src=self.filename)
         self.BDtabs.append(self.filename)
         self.afficher_onglets()
+
+    def lire(self):
+        texte = self.sender().text()
+        self.filename = texte[5:len(texte)]
+        T = self.lire_bibliotheque()
+        for i in T :
+            for j in i :
+                if j == self.filename :
+                    emplacement = T[T.index(i)][1]
+                    break
+        print(emplacement)
+        livre = c.COMICParser("C:/Users/clement/OneDrive - ESME/prépa/semestre 4/IHM/projet final/IHM_projet_final/spidersurf.cbz")
+        livre.read_book()
+        self.BDtabs.append(emplacement)
+        self.afficher_onglets()
+
+
 
 class page(QMainWindow):
     def __init__(self, nom):
@@ -124,12 +188,13 @@ class page(QMainWindow):
         self.liste = self.livre.read_book()
         for i in self.liste :
             self.label = QLabel()
-            self.pixmap= QPixmap("./"+self.livre.name + "/" + i)
+            self.pixmap= QPixmap(self.livre.name + "/" + i)
             self.scaledPixmap= self.pixmap.scaledToWidth(self.width() * self.size)
             self.label.setPixmap(self.scaledPixmap)
 
             self.stackedLayout.addWidget(self.label)
-
+       
+        
         self.widget = QWidget()
         self.widget.setLayout(self.pageLayout)
         self.setCentralWidget(self.widget)
@@ -138,7 +203,13 @@ class page(QMainWindow):
         self.previous.clicked.connect(self.changerPage)
         self.buttonLayout.addWidget(self.previous)
         self.previous.setEnabled(False)
-
+        
+        
+        self.spin = QSpinBox()
+        self.spin.setMaximum(len(self.liste)-1)
+        self.spin.setMinimum(0)
+        self.spin.valueChanged.connect(self.changerPage)
+        self.buttonLayout.addWidget(self.spin)
 
         self.next = QPushButton('Next')
         self.next.clicked.connect(self.changerPage)
@@ -163,11 +234,13 @@ class page(QMainWindow):
             if self.pos == len(self.liste)-1:
                 self.previous.setEnabled(True)
                 self.next.setEnabled(False)
+                
             else:
                 self.previous.setEnabled(True)
                 self.next.setEnabled(True)
                 self.pos+=1
-        else :
+            self.spin.setValue(self.spin.value()+1)
+        elif texte == 'Previous' :
             if self.pos ==0:
                 self.next.setEnabled(True)
                 self.previous.setEnabled(False)
@@ -176,6 +249,8 @@ class page(QMainWindow):
                 self.next.setEnabled(True)
 
                 self.pos-=1
+            self.spin.setValue(self.spin.value()-1)
+        self.pos = self.spin.value()
         self.stackedLayout.setCurrentIndex(self.pos)
     def zoom(self):
         texte = self.sender().text()

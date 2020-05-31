@@ -39,23 +39,32 @@ class COMICParser:
             self.image_list = [
                 i.filename for i in self.book.infolist()
                 if not i.isdir() and is_image(i.filename)]
-
-        self.image_list.sort()
+        print(self.image_list)
+        #self.image_list.sort()
         return self.image_list
 
-    def generate_metadata(self, author='<Unknown>', isbn = None, tags=[], quality=0):
+
+    def generate_metadata(self, author='<Unknown>', isbn = None, tags=[], quality=0, src=0):
         title = os.path.basename(self.book_extension[0]).strip(' ')
         cover = self.image_list[0]
 
         creation_time = time.ctime(os.path.getctime(self.filename))
         year = creation_time.split()[-1]
         try :
-            file = open("biblio.txt", "a")
-            biblio = file.write(str(cover) + "$" + str(title) + "$" + str(creation_time) + "$" + str(year) + "\n")
-            file.close()
+            T = lire_bibliotheque()
+            a = 0
+            etat = False
+            while a<len(T)-1:
+                if src == T[a][1]:
+                    etat = True
+                a+=1
+            if etat == False :
+                file = open("biblio.txt", "a")
+                biblio = file.write(str(cover) + "$" + str(src) + "$" + str(title) + "$" + str(author) + "$" + str(creation_time) + "$" + str(year) + "$" + str(tags) + "$" + str(quality) + "\n")
+                file.close()
         except :
             file = open("biblio.txt", "w")
-            biblio = file.write(str(cover) + "$" + str(title) + "$" + str(creation_time) + "$" + str(year) + "\n")
+            biblio = file.write(str(cover) + "$" + str(src) + "$" + str(title) + "$" + str(author) + "$" + str(creation_time) + "$" + str(year) + "$" + str(tags) + "$" + str(quality) + "\n")
             file.close()
 
         self._metadata = {"cover":cover, "title": title, "author":author, "year":year, "tags":tags, "quality":quality}
@@ -85,7 +94,27 @@ def is_image(filename):
     else:
         return False
 
+def lire_bibliotheque():
+    file = open("biblio.txt", 'r')
+    biblio = file.read()
+    T = [[]]
+    a = ''
+    lv = 0
+    for i in biblio :
+        a+= i
+        if i =='$':
+            a = a[0:-1]
+            T[lv].append(a)
+            a = ''
+        if i == "\n":
+            a = a[0:-1]
+            T[lv].append(a)
+            a = ''
+            T.append([])
+            lv+=1
+    return T
+
 if __name__ == '__main__':
-    livre = COMICParser("spidersurf.cbz")
+    livre = COMICParser("C:/Users/clement/OneDrive - ESME/prépa/semestre 4/IHM/projet final/IHM_projet_final/spidersurf.cbz")
     livre.read_book()
     livre.generate_metadata()
