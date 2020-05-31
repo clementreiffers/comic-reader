@@ -7,7 +7,7 @@ class FenetrePrincipale(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle('Liseuse')
-        self.setGeometry(200, 200, 1035, 500)
+        self.setGeometry(200, 200, 1140, 500)
 
         self.filename = ""
         self.BDtabs = []
@@ -19,9 +19,14 @@ class FenetrePrincipale(QMainWindow):
         self.ouvrir.triggered.connect(self.charger)
         self.ouvrir.setStatusTip("Pour ouvrir un fichier")
 
+        self.biblio = QAction("Bibliothèque", self)
+        self.biblio.triggered.connect(self.afficher_biblio)
+        self.biblio.setStatusTip("Pour afficher la bibliothèque")
+
         self.barreDeMenu = self.menuBar()
         self.menuFichier = self.barreDeMenu.addMenu("&Fichier")
         self.menuFichier.addAction(self.ouvrir)
+        self.menuFichier.addAction(self.biblio)
         self.menuFichier.addSeparator()
 
         self.menuEdition = self.barreDeMenu.addMenu("&Edition")
@@ -53,8 +58,10 @@ class FenetrePrincipale(QMainWindow):
         nom = nom[::-1]
 
         for i in self.BDtabs:
-            self.tabs.addTab(page(i), nom[0:-4])
-            self.setCentralWidget(self.tabs)
+            if i != 1 :
+                self.tabs.addTab(page(i), nom[0:-4])
+                self.setCentralWidget(self.tabs)
+
 
     def lire_bibliotheque(self):
         file = open("biblio.txt", 'r')
@@ -75,7 +82,8 @@ class FenetrePrincipale(QMainWindow):
                 T.append([])
                 lv+=1
         return T
-    def afficher_biblio(self, T):
+    def afficher_biblio(self, T=None):
+        T = self.lire_bibliotheque()
         self.tableWidget = QTableWidget()
         self.tableWidget.setColumnCount(11)
         self.tableWidget.setRowCount(len(T))
@@ -93,6 +101,11 @@ class FenetrePrincipale(QMainWindow):
         self.tableWidget.setItem(0, 10 , QTableWidgetItem("delete"))
         header = self.tableWidget.verticalHeader()
         for i in range(len(T)-1):
+            self.btn = QAction("lire " + T[i][2], self)
+            self.btn.triggered.connect(self.lire)
+            self.btn.setStatusTip("Lire cette Ouvrage")
+            self.menuLire.addAction(self.btn)
+
             for j in range(len(T[i])+10):
                 if j == 0 :
                     info = QVBoxLayout()
@@ -111,23 +124,22 @@ class FenetrePrincipale(QMainWindow):
                     self.tableWidget.setCellWidget(i+1, j, widget)
                     header.setSectionResizeMode(i+1, QHeaderView.Stretch)
 
-
-                elif j == len(T)+5:
+                elif j == len(T)+6:
                     self.btn = QPushButton("lire\n" + str(T[i][2]))
                     self.btn.clicked.connect(self.lire)
                     self.tableWidget.setCellWidget(i+1, j, self.btn)
 
-                elif j == len(T)+6:
+                elif j == len(T)+7:
                     self.btn = QPushButton("editer")
                     #self.btn.clicked.connect(self.editer)
                     self.tableWidget.setCellWidget(i+1, j, self.btn)
 
-                elif j >= len(T)+7:
+                elif j >= len(T)+8:
                     self.btn = QPushButton("delete")
                     #self.btn.clicked.connect(self.delete)
                     self.tableWidget.setCellWidget(i+1, j, self.btn)
 
-                elif j<len(T)+4:
+                elif j<len(T)+6:
                     self.tableWidget.setItem(i+1, j, QTableWidgetItem(T[i][j]))
 
             self.vBoxLayout = QVBoxLayout()
@@ -135,6 +147,11 @@ class FenetrePrincipale(QMainWindow):
             widget = QWidget()
             widget.setLayout(self.vBoxLayout)
             self.setCentralWidget(widget)
+
+    def ajout_biblio(self):
+        self.BDtabs.append(1)
+        self.afficher_onglets()
+
 
     def charger(self):
         dialogue = QFileDialog()
@@ -154,13 +171,10 @@ class FenetrePrincipale(QMainWindow):
                 if j == self.filename :
                     emplacement = T[T.index(i)][1]
                     break
-        print(emplacement)
-        livre = c.COMICParser("C:/Users/clement/OneDrive - ESME/prépa/semestre 4/IHM/projet final/IHM_projet_final/spidersurf.cbz")
+        livre = c.COMICParser(emplacement)
         livre.read_book()
         self.BDtabs.append(emplacement)
         self.afficher_onglets()
-
-
 
 class page(QMainWindow):
     def __init__(self, nom):
@@ -185,8 +199,8 @@ class page(QMainWindow):
             self.label.setPixmap(self.scaledPixmap)
 
             self.stackedLayout.addWidget(self.label)
-       
-        
+
+
         self.widget = QWidget()
         self.widget.setLayout(self.pageLayout)
         self.setCentralWidget(self.widget)
@@ -195,8 +209,8 @@ class page(QMainWindow):
         self.previous.clicked.connect(self.changerPage)
         self.buttonLayout.addWidget(self.previous)
         self.previous.setEnabled(False)
-        
-        
+
+
         self.spin = QSpinBox()
         self.spin.setMaximum(len(self.liste)-1)
         self.spin.setMinimum(0)
@@ -226,7 +240,7 @@ class page(QMainWindow):
             if self.pos == len(self.liste)-1:
                 self.previous.setEnabled(True)
                 self.next.setEnabled(False)
-                
+
             else:
                 self.previous.setEnabled(True)
                 self.next.setEnabled(True)

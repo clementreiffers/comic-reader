@@ -39,8 +39,7 @@ class COMICParser:
             self.image_list = [
                 i.filename for i in self.book.infolist()
                 if not i.isdir() and is_image(i.filename)]
-        print(self.image_list)
-        #self.image_list.sort()
+        self.image_list.sort()
         return self.image_list
 
 
