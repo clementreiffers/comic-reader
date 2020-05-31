@@ -114,6 +114,6 @@ def lire_bibliotheque():
     return T
 
 if __name__ == '__main__':
-    livre = COMICParser("C:/Users/clement/OneDrive - ESME/prépa/semestre 4/IHM/projet final/IHM_projet_final/spidersurf.cbz")
+    livre = COMICParser("spidersurf.cbz")
     livre.read_book()
     livre.generate_metadata()
