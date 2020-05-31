@@ -34,10 +34,15 @@ class FenetrePrincipale(QMainWindow):
         self.biblio.triggered.connect(self.afficher_biblio)
         self.biblio.setStatusTip("Pour afficher la bibliothèque")
 
+        self.quit = QAction("exit", self)
+        self.quit.triggered.connect(self.quitter)
+        self.quit.setStatusTip("Pour quitter")
+
         self.barreDeMenu = self.menuBar()
         self.menuFichier = self.barreDeMenu.addMenu("&Fichier")
         self.menuFichier.addAction(self.ouvrir)
         self.menuFichier.addAction(self.biblio)
+        self.menuFichier.addAction(self.quit)
         self.menuFichier.addSeparator()
 
         self.menuEdition = self.barreDeMenu.addMenu("&Edition")
@@ -53,9 +58,15 @@ class FenetrePrincipale(QMainWindow):
         self.menuAide.addSeparator()
 
         self.ouvrir.setShortcut(QKeySequence("ctrl+o"))
+        self.biblio.setShortcut(QKeySequence("ctrl+b"))
+        self.quit.setShortcut(QKeySequence("ctrl+q"))
+
 
         self.biblio = self.lire_bibliotheque()
         self.afficher_biblio(self.biblio)
+
+    def quitter(self):
+        exit()
 
     def afficher_onglets(self):
         self.tabs=QTabWidget()
@@ -69,9 +80,8 @@ class FenetrePrincipale(QMainWindow):
         nom = nom[::-1]
 
         for i in self.BDtabs:
-            if i != 1 :
-                self.tabs.addTab(page(i), nom[0:-4])
-                self.setCentralWidget(self.tabs)
+            self.tabs.addTab(page(i), nom[0:-4])
+            self.setCentralWidget(self.tabs)
 
 
     def lire_bibliotheque(self):
@@ -158,10 +168,6 @@ class FenetrePrincipale(QMainWindow):
             widget = QWidget()
             widget.setLayout(self.vBoxLayout)
             self.setCentralWidget(widget)
-
-    def ajout_biblio(self):
-        self.BDtabs.append(1)
-        self.afficher_onglets()
 
 
     def charger(self):
