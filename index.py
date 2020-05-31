@@ -3,11 +3,21 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 import comics as c
+import sys
+from PyQt5 import QtGui
+
 class FenetrePrincipale(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle('Liseuse')
+
         self.setGeometry(200, 200, 1140, 500)
+
+
+        self.setWindowIcon(QtGui.QIcon('spidermanicon.png'))
+
+        self.setGeometry(200, 200, 1035, 500)
+
 
         self.filename = ""
         self.BDtabs = []
@@ -18,6 +28,7 @@ class FenetrePrincipale(QMainWindow):
         self.ouvrir = QAction("Ouvrir", self)
         self.ouvrir.triggered.connect(self.charger)
         self.ouvrir.setStatusTip("Pour ouvrir un fichier")
+        self.ouvrir.setIcon(QIcon("icons8-fichier-48.png"))
 
         self.biblio = QAction("Bibliothèque", self)
         self.biblio.triggered.connect(self.afficher_biblio)
