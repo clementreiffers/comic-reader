@@ -1,10 +1,25 @@
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
-class Edition(QMainWindow):
+class Edition(QWidget):
     def __init__(self):
         super().__init__()
-        self.verif = False
-        self.app()
-    def app(self):
-        self.setWindowTitle('Première Fenêtre')
+        widget = QWidget()
+        posit = QVBoxLayout()
+        posit.addWidget(QLineEdit())
+        posit.addWidget(QLineEdit())
+        posit.addWidget(QPushButton())
+
+        widget.setLayout(posit)
+
+
+if __name__ == '__main__':
+
+    app = QCoreApplication.instance()
+    if app == None:
+        app = QApplication([''])
+
+    window = Edition()
+    window.show()
+
+    app.exec()

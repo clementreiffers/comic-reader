@@ -69,7 +69,7 @@ class FenetrePrincipale(QMainWindow):
 
     def quitter(self):
         exit()
-        
+
     def au_revoir(self):
         partir = QAction('&Exit',self)
         partir.setShortcut('Ctrl+Q')
@@ -80,7 +80,7 @@ class FenetrePrincipale(QMainWindow):
 
     def closeEvent(self,event):
         reply = QMessageBox.question(self,'Attention','Êtes vous sûr de vouloir quitter la liseuse.',QMessageBox.Yes|QMessageBox.No,QMessageBox.Yes)
-        
+
         if reply == QMessageBox.Yes :
             qApp.quit()
         else :
@@ -174,7 +174,7 @@ class FenetrePrincipale(QMainWindow):
                     self.tableWidget.setCellWidget(i+1, j, self.btn)
 
                 elif j == len(T)+7:
-                    self.btn = QPushButton("editer")
+                    self.btn = QPushButton("editer\n"+ str(T[i][2]))
                     self.btn.clicked.connect(self.editer)
                     self.tableWidget.setCellWidget(i+1, j, self.btn)
 
@@ -193,9 +193,61 @@ class FenetrePrincipale(QMainWindow):
             self.setCentralWidget(widget)
 
     def editer(self):
-        window = e.Edition()
-        while window.verif :
-            window.show()
+        texte = self.sender().text()
+        self.filename = texte[7:len(texte)]
+        T = self.lire_bibliotheque()
+        for i in T :
+            for j in i :
+                if j == self.filename :
+                    book = T.index(i)
+                    break
+        widget = QWidget()
+        qv = QVBoxLayout()
+        qv.addWidget(QLabel("titre"))
+        titre = QLineEdit()
+        titre.setText(T[book][2])
+        qv.addWidget(titre)
+        qv.addWidget(QLabel("auteur"))
+        author = QLineEdit()
+        author.setText(T[book][3])
+        qv.addWidget(author)
+        qv.addWidget(QLabel("date de création"))
+        creation_time = QLineEdit()
+        creation_time.setText(T[book][4])
+        qv.addWidget(creation_time)
+        qv.addWidget(QLabel("année"))
+        year = QLineEdit()
+        year.setText(T[book][5])
+        qv.addWidget(year)
+        qv.addWidget(QLabel("tags"))
+        self.tag = QLineEdit()
+        self.tag.setText(T[book][6])
+        add = QPushButton("ajouter")
+        qv.addWidget(self.tag)
+        qv.addWidget(add)
+        qv.addWidget(QLabel("Quality"))
+        quality = QLineEdit()
+        quality.setText(T[book][7])
+        qv.addWidget(quality)
+        qv.addWidget(QLabel("source"))
+        source = QPushButton("source")
+        source.clicked.connect(self.changer_source)
+        qv.addWidget(source)
+        annuler = QPushButton("annuler")
+        valider = QPushButton("valider")
+        qh = QHBoxLayout()
+        qh.addWidget(annuler)
+        qh.addWidget(valider)
+        w = QWidget()
+        w.setLayout(qh)
+        qv.addWidget(w)
+        widget.setLayout(qv)
+        self.setCentralWidget(widget)
+
+    def changer_source(self):
+        dialogue = QFileDialog()
+        self.source_temp = dialogue.getOpenFileName(self,'Ouvrir fichier',filter='Comic Book Zip (*.cbz);;Comic Book Rar (*.cbr)')[0]
+
 
     def charger(self):
         dialogue = QFileDialog()
