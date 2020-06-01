@@ -1,1 +1,5 @@
+<<<<<<< HEAD
 Spider-Man Team-Up 02-00.jpg$C:/Users/LOCQUENEUX/Desktop/IHM/projet_final/IHM_projet_final/spidersurf.cbz$spidersurf$<Unknown>$Fri May 29 17:27:44 2020$2020$[]$0
+=======
+Spider-Man Team-Up 02-00.jpg$C:/Users/clement/OneDrive - ESME/prépa/semestre 4/IHM/projet final/IHM_projet_final/spidersurf.cbz$spidersurf$<Unknown>$Tue May 19 11:52:38 2020$2020$[]$0
+>>>>>>> e7515adec9288af70d6a0e892cbd7cb921bd4f83
