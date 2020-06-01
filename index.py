@@ -2,6 +2,7 @@
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
+import edition as e
 import comics as c
 import page as p
 import sys
@@ -171,14 +172,9 @@ class FenetrePrincipale(QMainWindow):
             self.setCentralWidget(widget)
 
     def editer(self):
-        app = QCoreApplication.instance()
-        if app == None:
-            app = QApplication([''])
-
-        window = Editer()
-        window.show()
-
-        app.exec()
+        window = e.Edition()
+        while window.verif :
+            window.show()
 
     def charger(self):
         dialogue = QFileDialog()
