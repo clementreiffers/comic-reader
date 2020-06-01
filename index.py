@@ -2,7 +2,6 @@
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
-import edition as e
 import comics as c
 import page as p
 import sys
@@ -127,7 +126,8 @@ class FenetrePrincipale(QMainWindow):
                 lv+=1
         return T
     def afficher_biblio(self, T=None):
-        T = self.lire_bibliotheque()
+        self.T = self.lire_bibliotheque()
+        T = self.T
         self.tableWidget = QTableWidget()
         self.tableWidget.setColumnCount(11)
         self.tableWidget.setRowCount(len(T))
@@ -195,46 +195,59 @@ class FenetrePrincipale(QMainWindow):
     def editer(self):
         texte = self.sender().text()
         self.filename = texte[7:len(texte)]
-        T = self.lire_bibliotheque()
+        T = self.T
         for i in T :
             for j in i :
                 if j == self.filename :
-                    book = T.index(i)
+                    self.book = T.index(i)
                     break
+        book = self.book
+        self.source_temp = T[book][1]
+        self.title_temp = T[book][2]
+        self.author_temp = T[book][3]
+        self.creation_time_temp = T[book][4]
+        self.year_temp = T[book][5]
+        self.tags_temp = []
+        self.quality_temp = T[book][7]
+
+
         widget = QWidget()
         qv = QVBoxLayout()
         qv.addWidget(QLabel("titre"))
-        titre = QLineEdit()
-        titre.setText(T[book][2])
-        qv.addWidget(titre)
+        self.titre = QLineEdit()
+        self.titre.setPlaceholderText(T[book][2])
+        qv.addWidget(self.titre)
         qv.addWidget(QLabel("auteur"))
-        author = QLineEdit()
-        author.setText(T[book][3])
-        qv.addWidget(author)
+        self.author = QLineEdit()
+        self.author.setPlaceholderText(T[book][3])
+        qv.addWidget(self.author)
         qv.addWidget(QLabel("date de création"))
-        creation_time = QLineEdit()
-        creation_time.setText(T[book][4])
-        qv.addWidget(creation_time)
+        self.creation_time = QLineEdit()
+        self.creation_time.setPlaceholderText(T[book][4])
+        qv.addWidget(self.creation_time)
         qv.addWidget(QLabel("année"))
-        year = QLineEdit()
-        year.setText(T[book][5])
-        qv.addWidget(year)
+        self.year = QLineEdit()
+        self.year.setPlaceholderText(T[book][5])
+        qv.addWidget(self.year)
         qv.addWidget(QLabel("tags"))
         self.tag = QLineEdit()
         self.tag.setText(T[book][6])
         add = QPushButton("ajouter")
+        add.clicked.connect(self.add_tags)
         qv.addWidget(self.tag)
         qv.addWidget(add)
         qv.addWidget(QLabel("Quality"))
-        quality = QLineEdit()
-        quality.setText(T[book][7])
-        qv.addWidget(quality)
+        self.quality = QLineEdit()
+        self.quality.setPlaceholderText(T[book][7])
+        qv.addWidget(self.quality)
         qv.addWidget(QLabel("source"))
-        source = QPushButton("source")
-        source.clicked.connect(self.changer_source)
-        qv.addWidget(source)
+        self.source = QPushButton("source")
+        self.source.clicked.connect(self.changer_source)
+        qv.addWidget(self.source)
         annuler = QPushButton("annuler")
+        annuler.clicked.connect(self.afficher_biblio)
         valider = QPushButton("valider")
+        valider.clicked.connect(self.update)
         qh = QHBoxLayout()
         qh.addWidget(annuler)
         qh.addWidget(valider)
@@ -244,10 +257,31 @@ class FenetrePrincipale(QMainWindow):
         widget.setLayout(qv)
         self.setCentralWidget(widget)
 
+    def add_tags(self):
+        tag = self.tag.text()
+        if ',' in tag : tag.split(",")
+        self.tags_temp = tag
+        self.tag.setPlaceholderText(str(self.tags_temp))
+
+    def update(self):
+        if self.titre.text() != "": self.title_temp = self.titre.text()
+        if self.author.text() != "":self.author_temp = self.author.text()
+        if self.creation_time.text() != "":self.creation_time_temp = self.creation_time.text()
+        if self.year.text() != "":self.year_temp = self.year.text()
+        if self.quality.text() != "":self.quality_temp = self.quality.text()
+
+        T_book = [self.T[self.book][0], self.source_temp, self.title_temp, self.author_temp, self.creation_time_temp, self.year_temp, str(self.tags_temp), self.quality_temp]
+
+        self.T[self.book] = T_book
+
+        file = open("biblio.txt", "w")
+        for i in range(len(self.T)-1):
+            biblio = file.write(str(self.T[i][0]) + "$" + str(self.T[i][1]) + "$" + str(self.T[i][2]) + "$" + str(self.T[i][3]) + "$" + str(self.T[i][4]) + "$" + str(self.T[i][5]) + "$" + str(self.T[i][6]) + "$" + str(self.T[i][7]) + "\n")
+        file.close()
+        self.afficher_biblio()
     def changer_source(self):
         dialogue = QFileDialog()
         self.source_temp = dialogue.getOpenFileName(self,'Ouvrir fichier',filter='Comic Book Zip (*.cbz);;Comic Book Rar (*.cbr)')[0]
-
 
     def charger(self):
         dialogue = QFileDialog()
