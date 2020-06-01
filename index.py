@@ -67,6 +67,27 @@ class FenetrePrincipale(QMainWindow):
 
     def quitter(self):
         exit()
+        
+    def au_revoir(self):
+        partir = QAction('&Exit',self)
+        partir.setShortcut('Ctrl+Q')
+        partir.setStatusTip('Exit App')
+        partir.triggered.connect(self.closeEvent)
+        return partir
+
+
+    def closeEvent(self,event):
+        reply = QMessageBox.question(self,'Attention','Êtes vous sûr de vouloir quitter la liseuse.',QMessageBox.Yes|QMessageBox.No,QMessageBox.Yes)
+        
+        if reply == QMessageBox.Yes :
+            qApp.quit()
+        else :
+            try:
+                event.ignore()
+            except AttributeError:
+                pass
+
+
 
     def afficher_onglets(self):
         self.tabs=QTabWidget()
@@ -293,6 +314,8 @@ class page(QMainWindow):
                 self.moins.setEnabled(True)
                 self.size-=0.125
         self.app()
+
+
 
 
 app = QCoreApplication.instance()
