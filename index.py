@@ -179,13 +179,15 @@ class FenetrePrincipale(QMainWindow):
                     self.tableWidget.setCellWidget(i+1, j, self.btn)
 
                 elif j >= len(T)+8:
-                    self.btn = QPushButton("delete")
-                    #self.btn.clicked.connect(self.delete)
+                    self.btn = QPushButton("supprimer\n"+ str(T[i][2]))
+                    self.btn.clicked.connect(self.delete)
                     self.tableWidget.setCellWidget(i+1, j, self.btn)
 
                 elif j<len(T)+6:
-                    self.tableWidget.setItem(i+1, j, QTableWidgetItem(T[i][j]))
-
+                    try :
+                        self.tableWidget.setItem(i+1, j, QTableWidgetItem(T[i][j]))
+                    except :
+                        ...
             self.vBoxLayout = QVBoxLayout()
             self.vBoxLayout.addWidget(self.tableWidget)
             widget = QWidget()
@@ -279,9 +281,27 @@ class FenetrePrincipale(QMainWindow):
             biblio = file.write(str(self.T[i][0]) + "$" + str(self.T[i][1]) + "$" + str(self.T[i][2]) + "$" + str(self.T[i][3]) + "$" + str(self.T[i][4]) + "$" + str(self.T[i][5]) + "$" + str(self.T[i][6]) + "$" + str(self.T[i][7]) + "\n")
         file.close()
         self.afficher_biblio()
+
     def changer_source(self):
         dialogue = QFileDialog()
         self.source_temp = dialogue.getOpenFileName(self,'Ouvrir fichier',filter='Comic Book Zip (*.cbz);;Comic Book Rar (*.cbr)')[0]
+
+    def delete(self):
+        texte = self.sender().text()
+        self.filename = texte[10:len(texte)]
+        T = self.T
+        for i in T :
+            for j in i :
+                if j == self.filename :
+                    self.book = T.index(i)
+                    break
+        self.T.pop(self.book)
+        file = open("biblio.txt", "w")
+        for i in range(len(self.T)-1):
+            biblio = file.write(str(self.T[i][0]) + "$" + str(self.T[i][1]) + "$" + str(self.T[i][2]) + "$" + str(self.T[i][3]) + "$" + str(self.T[i][4]) + "$" + str(self.T[i][5]) + "$" + str(self.T[i][6]) + "$" + str(self.T[i][7]) + "\n")
+        file.close()
+        self.afficher_biblio()
+
 
     def charger(self):
         dialogue = QFileDialog()
