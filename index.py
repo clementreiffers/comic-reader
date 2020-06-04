@@ -196,11 +196,8 @@ class FenetrePrincipale(QMainWindow):
                     self.btn.clicked.connect(self.delete)
                     self.tableWidget.setCellWidget(i+1, j, self.btn)
 
-                elif j<len(T)+6:
-                    try :
-                        self.tableWidget.setItem(i+1, j, QTableWidgetItem(T[i][j]))
-                    except :
-                        ...
+                elif j<len(T[i]):
+                    self.tableWidget.setItem(i+1, j, QTableWidgetItem(T[i][j]))
             self.vBoxLayout = QVBoxLayout()
             self.vBoxLayout.addWidget(self.tableWidget)
             widget = QWidget()
