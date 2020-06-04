@@ -5,21 +5,16 @@ from PyQt5.QtGui import *
 import comics as c
 import page as p
 import sys
+import subprocess
 from PyQt5 import QtGui
 
 class FenetrePrincipale(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle('Liseuse')
-
         self.setGeometry(200, 200, 1140, 500)
-
-
         self.setWindowIcon(QtGui.QIcon('spidermanicon.png'))
-
         self.setGeometry(200, 200, 1035, 500)
-
-
         self.filename = ""
         self.BDtabs = []
 
@@ -39,10 +34,15 @@ class FenetrePrincipale(QMainWindow):
         self.quit.triggered.connect(self.quitter)
         self.quit.setStatusTip("Pour quitter")
 
+        self.dl = QAction("Télécharger des BD", self)
+        self.dl.triggered.connect(self.dowload)
+        self.dl.setStatusTip("Pour télécharger des Ouvrages")
+
         self.barreDeMenu = self.menuBar()
         self.menuFichier = self.barreDeMenu.addMenu("&Fichier")
         self.menuFichier.addAction(self.ouvrir)
         self.menuFichier.addAction(self.biblio)
+        self.menuFichier.addAction(self.dl)
         self.menuFichier.addAction(self.quit)
         self.menuFichier.addSeparator()
 
@@ -61,10 +61,23 @@ class FenetrePrincipale(QMainWindow):
         self.ouvrir.setShortcut(QKeySequence("ctrl+o"))
         self.biblio.setShortcut(QKeySequence("ctrl+b"))
         self.quit.setShortcut(QKeySequence("ctrl+q"))
+        self.dl.setShortcut(QKeySequence("ctrl+d"))
 
 
         self.biblio = self.lire_bibliotheque()
         self.afficher_biblio(self.biblio)
+
+    def dowload(self):
+        try :
+            try :
+                #commande pour windows
+                subprocess.call("explorer " + "http://www.openculture.com/2014/03/download-15000-free-golden-age-comics-from-the-digital-comic-museum.html", shell=True)
+            except :
+                #commande pour les systèmes debian
+                subprocess.call("xdg-open " + "http://www.openculture.com/2014/03/download-15000-free-golden-age-comics-from-the-digital-comic-museum.html", shell=True)
+        except :
+            print("votre système n'est pas répertorié dans nos commandes")
+
 
     def quitter(self):
         exit()
@@ -168,17 +181,17 @@ class FenetrePrincipale(QMainWindow):
                     self.tableWidget.setCellWidget(i+1, j, widget)
                     header.setSectionResizeMode(i+1, QHeaderView.Stretch)
 
-                elif j == len(T)+6:
+                elif j == len(T)+5:
                     self.btn = QPushButton("lire\n" + str(T[i][2]))
                     self.btn.clicked.connect(self.lire)
                     self.tableWidget.setCellWidget(i+1, j, self.btn)
 
-                elif j == len(T)+7:
+                elif j == len(T)+6:
                     self.btn = QPushButton("editer\n"+ str(T[i][2]))
                     self.btn.clicked.connect(self.editer)
                     self.tableWidget.setCellWidget(i+1, j, self.btn)
 
-                elif j >= len(T)+8:
+                elif j >= len(T)+7:
                     self.btn = QPushButton("supprimer\n"+ str(T[i][2]))
                     self.btn.clicked.connect(self.delete)
                     self.tableWidget.setCellWidget(i+1, j, self.btn)
