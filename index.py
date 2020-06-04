@@ -14,9 +14,10 @@ class FenetrePrincipale(QMainWindow):
         self.setWindowTitle('Liseuse')
         self.setGeometry(200, 200, 1140, 500)
         self.setWindowIcon(QtGui.QIcon('spidermanicon.png'))
-        self.setGeometry(200, 200, 1035, 500)
+        self.setGeometry(200, 200, 1100, 500)
         self.filename = ""
         self.BDtabs = []
+        self.nomTabs = []
 
         self.toolbar = QToolBar("Bar d'outils")
         self.addToolBar(self.toolbar)
@@ -35,7 +36,7 @@ class FenetrePrincipale(QMainWindow):
         self.quit.setStatusTip("Pour quitter")
 
         self.dl = QAction("Télécharger des BD", self)
-        self.dl.triggered.connect(self.dowload)
+        self.dl.triggered.connect(self.download)
         self.dl.setStatusTip("Pour télécharger des Ouvrages")
 
         self.barreDeMenu = self.menuBar()
@@ -67,7 +68,7 @@ class FenetrePrincipale(QMainWindow):
         self.biblio = self.lire_bibliotheque()
         self.afficher_biblio(self.biblio)
 
-    def dowload(self):
+    def download(self):
         try :
             try :
                 #commande pour windows
@@ -107,16 +108,13 @@ class FenetrePrincipale(QMainWindow):
         self.tabs=QTabWidget()
         self.tabs.setTabPosition(QTabWidget.North)
         self.tabs.setTabsClosable(True)
-
-        nom = ""
-        for i in self.filename[::-1]:
-            if i == "/" : break
-            nom += i
-        nom = nom[::-1]
-
-        for i in self.BDtabs:
-            self.tabs.addTab(p.Page(i), nom[0:-4])
+        print('j')
+        for i in range(len(self.BDtabs)):
+            print(i)
+            self.tabs.addTab(p.Page(self.BDtabs[i-1]), self.nomTabs[i-1])
             self.setCentralWidget(self.tabs)
+
+
 
 
     def lire_bibliotheque(self):
@@ -170,7 +168,7 @@ class FenetrePrincipale(QMainWindow):
                     n = 0
                     txt = ''
                     self.label = QLabel()
-                    self.pixmap= QPixmap("./"+str(T[0][2])+ "/" + T[0][0])
+                    self.pixmap= QPixmap("./"+str(T[i][2])+ "/" + T[i][0])
                     self.scaledPixmap= self.pixmap.scaledToWidth(self.width() * 0.1)
                     self.label.setPixmap(self.scaledPixmap)
                     info = QLabel(txt)
@@ -320,6 +318,12 @@ class FenetrePrincipale(QMainWindow):
         livre.read_book()
         livre.generate_metadata(author='<Unknown>', isbn = None, tags=[], quality=0, src=self.filename)
         self.BDtabs.append(self.filename)
+        nom = ""
+        for i in self.filename[::-1]:
+            if i == "/" : break
+            nom += i
+        nom = nom[::-1]
+        self.nomTabs.append(nom)
         self.afficher_onglets()
 
     def lire(self):
@@ -334,10 +338,21 @@ class FenetrePrincipale(QMainWindow):
         livre = c.COMICParser(emplacement)
         livre.read_book()
         self.BDtabs.append(emplacement)
+
+
+        nom = ""
+        for i in self.filename[::-1]:
+            if i == "/" : break
+            nom += i
+        nom = nom[::-1]
+        self.nomTabs.append(nom)
+        printArray(self.BDtabs)
+        printArray(self.nomTabs)
         self.afficher_onglets()
 
-
-
+def printArray(T):
+    for i in T :
+        print(i)
 
 
 app = QCoreApplication.instance()
