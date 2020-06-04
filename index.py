@@ -181,17 +181,17 @@ class FenetrePrincipale(QMainWindow):
                     self.tableWidget.setCellWidget(i+1, j, widget)
                     header.setSectionResizeMode(i+1, QHeaderView.Stretch)
 
-                elif j == len(T)+5:
+                elif j == len(T[i]):
                     self.btn = QPushButton("lire\n" + str(T[i][2]))
                     self.btn.clicked.connect(self.lire)
                     self.tableWidget.setCellWidget(i+1, j, self.btn)
 
-                elif j == len(T)+6:
+                elif j == len(T[i])+1:
                     self.btn = QPushButton("editer\n"+ str(T[i][2]))
                     self.btn.clicked.connect(self.editer)
                     self.tableWidget.setCellWidget(i+1, j, self.btn)
 
-                elif j >= len(T)+7:
+                elif j == len(T[i])+2:
                     self.btn = QPushButton("supprimer\n"+ str(T[i][2]))
                     self.btn.clicked.connect(self.delete)
                     self.tableWidget.setCellWidget(i+1, j, self.btn)
