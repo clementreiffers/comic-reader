@@ -32,6 +32,8 @@ class Page(QMainWindow):
         self.previous = QPushButton('←')
         self.previous.clicked.connect(self.changerPage)
         self.buttonLayout.addWidget(self.previous)
+        self.previous.setMaximumWidth(50)
+        self.previous.setMinimumWidth(50)
         self.previous.setStyleSheet("font-size:20px; color : green;")
         self.previous.setEnabled(False)
 
@@ -46,12 +48,15 @@ class Page(QMainWindow):
         self.next = QPushButton('→')
         self.next.clicked.connect(self.changerPage)
         self.buttonLayout.addWidget(self.next)
+        self.next.setMaximumWidth(50)
+        self.next.setMinimumWidth(50)
         self.next.setStyleSheet("font-size:20px; color : green;")
         self.next.setEnabled(True)
 
         self.qh = QHBoxLayout()
         self.plus = QPushButton('+')
         self.plus.clicked.connect(self.zoom)
+
         self.plus.setStyleSheet("color:blue;")
 
         self.plus.setEnabled(True)

@@ -75,6 +75,7 @@ class FenetrePrincipale(QMainWindow):
         self.tabs=QTabWidget()
         self.tabs.setTabPosition(QTabWidget.North)
         self.tabs.setTabsClosable(True)
+        self.tabs.tabCloseRequested.connect(self.closeTab)
         #self.tabs.setMovable(True)
         #self.tabs.tabsClosable()
 
@@ -191,7 +192,7 @@ class FenetrePrincipale(QMainWindow):
             self.btn.setStatusTip("Lire cette Ouvrage")
             self.menuLire.addAction(self.btn)
 
-            for j in range(len(T[i])+10):
+            for j in range(len(T[i])+3):
                 if j == 0 :
                     info = QVBoxLayout()
                     h = QHBoxLayout()
@@ -310,12 +311,13 @@ class FenetrePrincipale(QMainWindow):
         if self.year.text() != "":self.year_temp = self.year.text()
         if self.quality.text() != "":self.quality_temp = self.quality.text()
 
+        print(str(self.T[self.book][2])+"/"+self.T[self.book][0])
         T_book = [self.T[self.book][0], self.source_temp, self.title_temp, self.author_temp, self.creation_time_temp, self.year_temp, str(self.tags_temp), self.quality_temp]
-
         self.T[self.book] = T_book
 
         file = open("biblio.txt", "w")
         for i in range(len(self.T)-1):
+
             biblio = file.write(str(self.T[i][0]) + "$" + str(self.T[i][1]) + "$" + str(self.T[i][2]) + "$" + str(self.T[i][3]) + "$" + str(self.T[i][4]) + "$" + str(self.T[i][5]) + "$" + str(self.T[i][6]) + "$" + str(self.T[i][7]) + "\n")
         file.close()
         self.afficher_biblio()
