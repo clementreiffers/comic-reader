@@ -32,6 +32,7 @@ class Page(QMainWindow):
         self.previous = QPushButton('←')
         self.previous.clicked.connect(self.changerPage)
         self.buttonLayout.addWidget(self.previous)
+        self.previous.setStyleSheet("font-size:20px; color : green;")
         self.previous.setEnabled(False)
 
 
@@ -45,17 +46,22 @@ class Page(QMainWindow):
         self.next = QPushButton('→')
         self.next.clicked.connect(self.changerPage)
         self.buttonLayout.addWidget(self.next)
+        self.next.setStyleSheet("font-size:20px; color : green;")
         self.next.setEnabled(True)
 
         self.qh = QHBoxLayout()
         self.plus = QPushButton('+')
         self.plus.clicked.connect(self.zoom)
-        self.qh.addWidget(self.plus)
+        self.plus.setStyleSheet("color:blue;")
+
         self.plus.setEnabled(True)
 
         self.moins = QPushButton('-')
         self.moins.clicked.connect(self.zoom)
+        self.plus.setStyleSheet("color:red;")
         self.qh.addWidget(self.moins)
+        self.qh.addWidget(self.plus)
+
         self.moins.setEnabled(True)
 
         self.pageLayout.addLayout(self.qh)
@@ -97,21 +103,23 @@ class Page(QMainWindow):
         self.stackedLayout.setCurrentIndex(self.pos)
 
     def zoom(self):
-        texte = self.sender().text()
-        print(texte)
-        if texte == '+':
-            if self.size == 0.9:
-                self.moins.setEnabled(True)
-                self.plus.setEnabled(False)
-            else:
-                self.moins.setEnabled(False)
-                self.plus.setEnabled(True)
-                self.size+=6
-        else :
-            if self.size ==0:
-                self.plus.setEnabled(True)
-                self.moins.setEnabled(False)
+        try :
+            texte = self.sender().text()
+            if texte == '+':
+                if self.size == 0.9:
+                    self.moins.setEnabled(True)
+                    self.plus.setEnabled(False)
+                else:
+                    self.moins.setEnabled(False)
+                    self.plus.setEnabled(True)
+                    self.size+=6
             else :
-                self.moins.setEnabled(True)
-                self.size-=6
-        self.app()
+                if self.size ==0:
+                    self.plus.setEnabled(True)
+                    self.moins.setEnabled(False)
+                else :
+                    self.moins.setEnabled(True)
+                    self.size-=6
+            self.app()
+        except :
+            ...
