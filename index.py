@@ -16,7 +16,7 @@ class FenetrePrincipale(QMainWindow):
         self.setWindowTitle('Liseuse')
         self.setGeometry(200, 200, 1140, 500)
         self.setWindowIcon(QtGui.QIcon('spidermanicon.png'))
-        self.setGeometry(200, 200, 1100, 500)
+        self.setGeometry(200, 200, 1200, 500)
         self.filename = ""
         self.BDtabs = []
         self.nomTabs = []
@@ -182,7 +182,7 @@ class FenetrePrincipale(QMainWindow):
         self.tableWidget = QTableWidget()
         self.tableWidget.setColumnCount(11)
         self.tableWidget.setRowCount(len(T))
-
+        self.tableWidget.setColumnWidth(0, 150)
         self.tableWidget.setItem(0, 0, QTableWidgetItem("cover"))
         self.tableWidget.setItem(0, 1, QTableWidgetItem("source"))
         self.tableWidget.setItem(0, 2, QTableWidgetItem("title"))
@@ -203,6 +203,7 @@ class FenetrePrincipale(QMainWindow):
 
             for j in range(len(T[i])+3):
                 if j == 0 :
+
                     info = QVBoxLayout()
                     h = QHBoxLayout()
                     n = 0

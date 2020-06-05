@@ -85,15 +85,15 @@ class COMICParser:
             zf.extractall(dest_dir)
 
     def unrar(self, source_filename, dest_dir=None):
-        """
-        a = patoolib.extract_archive(source_filename)
-        try :
-            os.rename(a, dest_dir)
-        except :
+        if os.path.exists(dest_dir):
             pass
+        else:
+            a = patoolib.extract_archive(source_filename)
+            #os.rename(a, dest_dir)
         """
         with rarfile.RarFile(source_filename) as file:
             file.extract(file.namelist()[0])
+        """
 
 
 def is_image(filename):
@@ -126,4 +126,4 @@ def lire_bibliotheque():
 if __name__ == '__main__':
 
     livre = COMICParser("Tom_Corbett_Space_Cadet_v2_001.cbr")
-    livre.unrar("Tom_Corbett_Space_Cadet_v2_001.cbr", "Tom_Corbett_Space_Cadet_v2_001")
+    print(livre.read_book())
