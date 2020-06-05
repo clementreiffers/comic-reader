@@ -72,6 +72,9 @@ class FenetrePrincipale(QMainWindow):
         self.close.setShortcut(QKeySequence("ctrl+w"))
         self.dl.setShortcut(QKeySequence("ctrl+d"))
 
+        self.tabs=QTabWidget()
+        self.tabs.setTabPosition(QTabWidget.North)
+        self.tabs.setTabsClosable(True)
 
         self.biblio = self.lire_bibliotheque()
         self.afficher_biblio(self.biblio)
@@ -92,13 +95,24 @@ class FenetrePrincipale(QMainWindow):
         exit()
 
     def closeTab(self):
-        """
-        self.BDtabs.pop(self.filename)
-        self.nomTabs.pop(nom)
-        self.afficher_onglets()
-        """
-        i = self.tabs.currentIndex()
-        print(self.nomTabs[i])
+        if len(self.nomTabs)>1:
+            i = self.tabs.currentIndex()
+            self.nomTabs.pop(i)
+            self.BDtabs.pop(i)
+            self.nouveaux_onglets()
+        else :
+            self.tabs=QTabWidget()
+            self.tabs.setTabPosition(QTabWidget.North)
+            self.tabs.setTabsClosable(True)
+            self.afficher_biblio()
+
+    def nouveaux_onglets(self):
+        self.tabs=QTabWidget()
+        self.tabs.setTabPosition(QTabWidget.North)
+        self.tabs.setTabsClosable(True)
+        for i in range(len(self.BDtabs)):
+            self.tabs.addTab(p.Page(self.BDtabs[i-1]), self.nomTabs[i-1])
+            self.setCentralWidget(self.tabs)
 
 
 
@@ -122,12 +136,12 @@ class FenetrePrincipale(QMainWindow):
                 pass
 
     def afficher_onglets(self):
-        self.tabs=QTabWidget()
-        self.tabs.setTabPosition(QTabWidget.North)
-        self.tabs.setTabsClosable(True)
-        for i in range(len(self.BDtabs)):
-            self.tabs.addTab(p.Page(self.BDtabs[i-1]), self.nomTabs[i-1])
+        try :
+            self.tabs.addTab(p.Page(self.BDtabs[-1]), self.nomTabs[-1])
             self.setCentralWidget(self.tabs)
+        except:
+            self.nouveaux_onglets()
+
 
     def lire_bibliotheque(self):
         file = open("biblio.txt", 'r')
@@ -168,7 +182,6 @@ class FenetrePrincipale(QMainWindow):
         self.tableWidget.setItem(0, 10 , QTableWidgetItem("delete"))
         header = self.tableWidget.verticalHeader()
         for i in range(len(T)-1):
-            print(i)
             self.btn = QAction("lire " + T[i][2], self)
             self.btn.triggered.connect(self.lire)
             self.btn.setStatusTip("Lire cette Ouvrage")
@@ -321,9 +334,6 @@ class FenetrePrincipale(QMainWindow):
         for i in range(len(self.T)-1):
             biblio = file.write(str(self.T[i][0]) + "$" + str(self.T[i][1]) + "$" + str(self.T[i][2]) + "$" + str(self.T[i][3]) + "$" + str(self.T[i][4]) + "$" + str(self.T[i][5]) + "$" + str(self.T[i][6]) + "$" + str(self.T[i][7]) + "\n")
         file.close()
-        #os.remove(self.filename, dir_fd=None)
-        #os.unlink(self.filename, dir_fd=None)
-        #os.rmdir(self.filename, dir_fd=None)
         shutil.rmtree(self.filename)
         self.afficher_biblio()
 
@@ -347,6 +357,7 @@ class FenetrePrincipale(QMainWindow):
             pass
 
     def lire(self):
+
         texte = self.sender().text()
         self.filename = texte[5:len(texte)]
         T = self.lire_bibliotheque()
@@ -355,19 +366,16 @@ class FenetrePrincipale(QMainWindow):
                 if j == self.filename :
                     emplacement = T[T.index(i)][1]
                     break
+        print(emplacement)
         livre = c.COMICParser(emplacement)
         livre.read_book()
         self.BDtabs.append(emplacement)
-
-
         nom = ""
         for i in self.filename[::-1]:
             if i == "/" : break
             nom += i
         nom = nom[::-1]
         self.nomTabs.append(nom)
-        printArray(self.BDtabs)
-        printArray(self.nomTabs)
         self.afficher_onglets()
 
 def printArray(T):
