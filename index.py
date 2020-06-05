@@ -83,7 +83,6 @@ class FenetrePrincipale(QMainWindow):
         self.tabs.setTabsClosable(True)
         self.tabs.tabCloseRequested.connect(self.closeTab)
         self.tabs.setMovable(True)
-        #self.tabs.tabsClosable()
 
         self.biblio = self.lire_bibliotheque()
         self.afficher_biblio(self.biblio)
@@ -105,7 +104,6 @@ class FenetrePrincipale(QMainWindow):
         exit()
 
     def closeTab(self):
-        print('j')
         if len(self.nomTabs)>1:
             i = self.tabs.currentIndex()
             self.nomTabs.pop(i)

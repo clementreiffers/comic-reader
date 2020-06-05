@@ -5,7 +5,7 @@ import comics as c
 class Page(QMainWindow):
     def __init__(self, nom):
         super().__init__()
-        self.size = self.width()
+        self.size = self.width()*0.7
         self.livre = c.COMICParser(nom)
         self.pos = 0
 
@@ -28,7 +28,6 @@ class Page(QMainWindow):
             self.pixmap= QPixmap(self.livre.name + "/" + i)
             self.scaledPixmap= self.pixmap.scaledToWidth(self.size)
             self.label.setPixmap(self.scaledPixmap)
-
             self.stackedLayout.addWidget(self.label)
 
 
@@ -41,7 +40,9 @@ class Page(QMainWindow):
         self.buttonLayout.addWidget(self.previous)
         self.previous.setMaximumWidth(50)
         self.previous.setMinimumWidth(50)
-        self.previous.setStyleSheet("font-size:40px; color : green;")
+        self.previous.setMaximumHeight(50)
+        self.previous.setMinimumHeight(50)
+        self.previous.setStyleSheet("font-size:50px; color : green;padding-bottom:15px;")
         self.previous.setEnabled(False)
 
 
@@ -57,20 +58,26 @@ class Page(QMainWindow):
         self.buttonLayout.addWidget(self.next)
         self.next.setMaximumWidth(50)
         self.next.setMinimumWidth(50)
-        self.next.setStyleSheet("font-size:40px; color : green;")
+        self.next.setMaximumHeight(50)
+        self.next.setMinimumHeight(50)
+        self.next.setStyleSheet("font-size:50px; color : green;padding-bottom:15px;")
         self.next.setEnabled(True)
 
         self.qh = QHBoxLayout()
         self.plus = QPushButton('+')
         self.plus.clicked.connect(self.zoom)
+        self.plus.setMaximumHeight(20)
+        self.plus.setMinimumHeight(20)
 
-        self.plus.setStyleSheet("color:blue;")
+        self.plus.setStyleSheet("color:blue;font-size:15px;")
 
         self.plus.setEnabled(True)
 
         self.moins = QPushButton('-')
         self.moins.clicked.connect(self.zoom)
-        self.plus.setStyleSheet("color:red;")
+        self.moins.setStyleSheet("color:red;font-size:15px;")
+        self.moins.setMaximumHeight(20)
+        self.moins.setMinimumHeight(20)
         self.qh.addWidget(self.moins)
         self.qh.addWidget(self.plus)
 
@@ -91,6 +98,7 @@ class Page(QMainWindow):
         w = QWidget()
         w.setLayout(self.stackedLayout)
         scroll.setWidget(w)
+        scroll.setAlignment(Qt.AlignHCenter)
         qh2.addWidget(scroll)
         self.pageLayout.addLayout(self.buttonLayout)
 
@@ -135,14 +143,14 @@ class Page(QMainWindow):
                 else:
                     self.moins.setEnabled(False)
                     self.plus.setEnabled(True)
-                    self.size+=6
+                    self.size+=10
             else :
                 if self.size ==0:
                     self.plus.setEnabled(True)
                     self.moins.setEnabled(False)
                 else :
                     self.moins.setEnabled(True)
-                    self.size-=6
+                    self.size-=10
             self.app()
         except :
             ...
