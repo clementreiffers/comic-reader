@@ -15,8 +15,15 @@ class Page(QMainWindow):
         self.pageLayout = QVBoxLayout()
         self.buttonLayout = QHBoxLayout()
         self.stackedLayout = QStackedLayout()
+        self.sw = QHBoxLayout()
         self.liste = self.livre.read_book()
+        a = 0
         for i in self.liste :
+            btn = QPushButton(str(a))
+            btn.setMaximumWidth(40)
+            btn.clicked.connect(self.changerPageAvecBtn)
+            self.sw.addWidget(btn)
+            a+=1
             self.label = QLabel()
             self.pixmap= QPixmap(self.livre.name + "/" + i)
             self.scaledPixmap= self.pixmap.scaledToWidth(self.size)
@@ -70,7 +77,13 @@ class Page(QMainWindow):
         self.moins.setEnabled(True)
 
         self.pageLayout.addLayout(self.qh)
+        scsw = QScrollArea()
+        w = QWidget()
+        w.setLayout(self.sw)
+        scsw.setWidget(w)
+        scsw.setMaximumHeight(60)
 
+        self.pageLayout.addWidget(scsw)
         scroll = QScrollArea()
         w = QWidget()
         w.setLayout(self.stackedLayout)
@@ -81,6 +94,8 @@ class Page(QMainWindow):
 
 
 
+    def changerPageAvecBtn(self):
+        self.stackedLayout.setCurrentIndex(int(self.sender().text()))
     @pyqtSlot()
     def changerPage(self):
         texte = self.sender().text()
