@@ -75,9 +75,12 @@ class FenetrePrincipale(QMainWindow):
         self.tabs=QTabWidget()
         self.tabs.setTabPosition(QTabWidget.North)
         self.tabs.setTabsClosable(True)
+        #self.tabs.setMovable(True)
+        #self.tabs.tabsClosable()
 
         self.biblio = self.lire_bibliotheque()
         self.afficher_biblio(self.biblio)
+
 
     def download(self):
         try :
@@ -99,7 +102,7 @@ class FenetrePrincipale(QMainWindow):
             i = self.tabs.currentIndex()
             self.nomTabs.pop(i)
             self.BDtabs.pop(i)
-            self.nouveaux_onglets()
+            self.tabs.removeTab(i)
         else :
             self.tabs=QTabWidget()
             self.tabs.setTabPosition(QTabWidget.North)
@@ -162,6 +165,7 @@ class FenetrePrincipale(QMainWindow):
                 T.append([])
                 lv+=1
         return T
+
     def afficher_biblio(self, T=None):
         self.T = self.lire_bibliotheque()
         T = self.T
