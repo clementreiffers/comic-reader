@@ -45,6 +45,10 @@ class FenetrePrincipale(QMainWindow):
         self.close.triggered.connect(self.closeTab)
         self.close.setStatusTip("Pour télécharger des Ouvrages")
 
+        self.onglet = QAction("Affichez les onglets", self)
+        self.onglet.triggered.connect(self.afficher_onglets)
+        self.onglet.setStatusTip("Pour afficher les onglets")
+
         self.barreDeMenu = self.menuBar()
         self.menuFichier = self.barreDeMenu.addMenu("&Fichier")
         self.menuFichier.addAction(self.ouvrir)
@@ -58,6 +62,7 @@ class FenetrePrincipale(QMainWindow):
         self.menuEdition.addSeparator()
 
         self.menuAffichage = self.barreDeMenu.addMenu("&Affichage")
+        self.menuAffichage.addAction(self.onglet)
         self.menuAffichage.addSeparator()
 
         self.menuLire = self.barreDeMenu.addMenu("&Lire")
@@ -71,12 +76,13 @@ class FenetrePrincipale(QMainWindow):
         self.quit.setShortcut(QKeySequence("ctrl+q"))
         self.close.setShortcut(QKeySequence("ctrl+w"))
         self.dl.setShortcut(QKeySequence("ctrl+d"))
+        self.onglet.setShortcut(QKeySequence("ctrl+n"))
 
         self.tabs=QTabWidget()
         self.tabs.setTabPosition(QTabWidget.North)
         self.tabs.setTabsClosable(True)
         self.tabs.tabCloseRequested.connect(self.closeTab)
-        #self.tabs.setMovable(True)
+        self.tabs.setMovable(True)
         #self.tabs.tabsClosable()
 
         self.biblio = self.lire_bibliotheque()
@@ -99,6 +105,7 @@ class FenetrePrincipale(QMainWindow):
         exit()
 
     def closeTab(self):
+        print('j')
         if len(self.nomTabs)>1:
             i = self.tabs.currentIndex()
             self.nomTabs.pop(i)
@@ -108,6 +115,8 @@ class FenetrePrincipale(QMainWindow):
             self.tabs=QTabWidget()
             self.tabs.setTabPosition(QTabWidget.North)
             self.tabs.setTabsClosable(True)
+            self.tabs.tabCloseRequested.connect(self.closeTab)
+            self.tabs.setMovable(True)
             self.afficher_biblio()
 
     def nouveaux_onglets(self):
@@ -305,7 +314,10 @@ class FenetrePrincipale(QMainWindow):
         self.tag.setPlaceholderText(str(self.tags_temp))
 
     def update(self):
-        if self.titre.text() != "": self.title_temp = self.titre.text()
+        if self.titre.text() != "":
+            self.title_temp = self.titre.text()
+            os.rename(self.T[self.book][2], self.title_temp)
+
         if self.author.text() != "":self.author_temp = self.author.text()
         if self.creation_time.text() != "":self.creation_time_temp = self.creation_time.text()
         if self.year.text() != "":self.year_temp = self.year.text()
@@ -335,6 +347,7 @@ class FenetrePrincipale(QMainWindow):
                 if j == self.filename :
                     self.book = T.index(i)
                     break
+        self.tableWidget.removeRow(self.book)
         self.T.pop(self.book)
         file = open("biblio.txt", "w")
         for i in range(len(self.T)-1):

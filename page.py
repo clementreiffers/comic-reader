@@ -15,7 +15,7 @@ class Page(QMainWindow):
         self.pageLayout = QVBoxLayout()
         self.buttonLayout = QHBoxLayout()
         self.stackedLayout = QStackedLayout()
-        self.sw = QHBoxLayout()
+        self.sw = QVBoxLayout()
         self.liste = self.livre.read_book()
         a = 0
         for i in self.liste :
@@ -41,7 +41,7 @@ class Page(QMainWindow):
         self.buttonLayout.addWidget(self.previous)
         self.previous.setMaximumWidth(50)
         self.previous.setMinimumWidth(50)
-        self.previous.setStyleSheet("font-size:20px; color : green;")
+        self.previous.setStyleSheet("font-size:40px; color : green;")
         self.previous.setEnabled(False)
 
 
@@ -57,7 +57,7 @@ class Page(QMainWindow):
         self.buttonLayout.addWidget(self.next)
         self.next.setMaximumWidth(50)
         self.next.setMinimumWidth(50)
-        self.next.setStyleSheet("font-size:20px; color : green;")
+        self.next.setStyleSheet("font-size:40px; color : green;")
         self.next.setEnabled(True)
 
         self.qh = QHBoxLayout()
@@ -81,14 +81,17 @@ class Page(QMainWindow):
         w = QWidget()
         w.setLayout(self.sw)
         scsw.setWidget(w)
-        scsw.setMaximumHeight(60)
-
-        self.pageLayout.addWidget(scsw)
+        scsw.setMaximumWidth(80)
+        qh2 = QHBoxLayout()
+        qh2.addWidget(scsw)
+        wid = QWidget()
+        wid.setLayout(qh2)
+        self.pageLayout.addWidget(wid)
         scroll = QScrollArea()
         w = QWidget()
         w.setLayout(self.stackedLayout)
         scroll.setWidget(w)
-        self.pageLayout.addWidget(scroll)
+        qh2.addWidget(scroll)
         self.pageLayout.addLayout(self.buttonLayout)
 
 
