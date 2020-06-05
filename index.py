@@ -7,6 +7,8 @@ import page as p
 import sys
 import subprocess
 from PyQt5 import QtGui
+import os
+import shutil
 
 class FenetrePrincipale(QMainWindow):
     def __init__(self):
@@ -39,11 +41,16 @@ class FenetrePrincipale(QMainWindow):
         self.dl.triggered.connect(self.download)
         self.dl.setStatusTip("Pour télécharger des Ouvrages")
 
+        self.close = QAction("Fermez l'onglet courant", self)
+        self.close.triggered.connect(self.closeTab)
+        self.close.setStatusTip("Pour télécharger des Ouvrages")
+
         self.barreDeMenu = self.menuBar()
         self.menuFichier = self.barreDeMenu.addMenu("&Fichier")
         self.menuFichier.addAction(self.ouvrir)
         self.menuFichier.addAction(self.biblio)
         self.menuFichier.addAction(self.dl)
+        self.menuFichier.addAction(self.close)
         self.menuFichier.addAction(self.quit)
         self.menuFichier.addSeparator()
 
@@ -62,6 +69,7 @@ class FenetrePrincipale(QMainWindow):
         self.ouvrir.setShortcut(QKeySequence("ctrl+o"))
         self.biblio.setShortcut(QKeySequence("ctrl+b"))
         self.quit.setShortcut(QKeySequence("ctrl+q"))
+        self.close.setShortcut(QKeySequence("ctrl+w"))
         self.dl.setShortcut(QKeySequence("ctrl+d"))
 
 
@@ -83,6 +91,17 @@ class FenetrePrincipale(QMainWindow):
     def quitter(self):
         exit()
 
+    def closeTab(self):
+        """
+        self.BDtabs.pop(self.filename)
+        self.nomTabs.pop(nom)
+        self.afficher_onglets()
+        """
+        i = self.tabs.currentIndex()
+        print(self.nomTabs[i])
+
+
+
     def au_revoir(self):
         partir = QAction('&Exit',self)
         partir.setShortcut('Ctrl+Q')
@@ -102,20 +121,13 @@ class FenetrePrincipale(QMainWindow):
             except AttributeError:
                 pass
 
-
-
     def afficher_onglets(self):
         self.tabs=QTabWidget()
         self.tabs.setTabPosition(QTabWidget.North)
         self.tabs.setTabsClosable(True)
-        print('j')
         for i in range(len(self.BDtabs)):
-            print(i)
             self.tabs.addTab(p.Page(self.BDtabs[i-1]), self.nomTabs[i-1])
             self.setCentralWidget(self.tabs)
-
-
-
 
     def lire_bibliotheque(self):
         file = open("biblio.txt", 'r')
@@ -156,6 +168,7 @@ class FenetrePrincipale(QMainWindow):
         self.tableWidget.setItem(0, 10 , QTableWidgetItem("delete"))
         header = self.tableWidget.verticalHeader()
         for i in range(len(T)-1):
+            print(i)
             self.btn = QAction("lire " + T[i][2], self)
             self.btn.triggered.connect(self.lire)
             self.btn.setStatusTip("Lire cette Ouvrage")
@@ -308,23 +321,30 @@ class FenetrePrincipale(QMainWindow):
         for i in range(len(self.T)-1):
             biblio = file.write(str(self.T[i][0]) + "$" + str(self.T[i][1]) + "$" + str(self.T[i][2]) + "$" + str(self.T[i][3]) + "$" + str(self.T[i][4]) + "$" + str(self.T[i][5]) + "$" + str(self.T[i][6]) + "$" + str(self.T[i][7]) + "\n")
         file.close()
+        #os.remove(self.filename, dir_fd=None)
+        #os.unlink(self.filename, dir_fd=None)
+        #os.rmdir(self.filename, dir_fd=None)
+        shutil.rmtree(self.filename)
         self.afficher_biblio()
 
 
     def charger(self):
-        dialogue = QFileDialog()
-        self.filename = dialogue.getOpenFileName(self,'Ouvrir fichier',filter='Comic Book Zip (*.cbz);;Comic Book Rar (*.cbr)')[0]
-        livre = c.COMICParser(self.filename)
-        livre.read_book()
-        livre.generate_metadata(author='<Unknown>', isbn = None, tags=[], quality=0, src=self.filename)
-        self.BDtabs.append(self.filename)
-        nom = ""
-        for i in self.filename[::-1]:
-            if i == "/" : break
-            nom += i
-        nom = nom[::-1]
-        self.nomTabs.append(nom)
-        self.afficher_onglets()
+        try :
+            dialogue = QFileDialog()
+            self.filename = dialogue.getOpenFileName(self,'Ouvrir fichier',filter='Comic Book Zip (*.cbz);;Comic Book Rar (*.cbr)')[0]
+            livre = c.COMICParser(self.filename)
+            livre.read_book()
+            livre.generate_metadata(author='<Unknown>', isbn = None, tags=[], quality=0, src=self.filename)
+            self.BDtabs.append(self.filename)
+            nom = ""
+            for i in self.filename[::-1]:
+                if i == "/" : break
+                nom += i
+            nom = nom[::-1]
+            self.nomTabs.append(nom)
+            self.afficher_onglets()
+        except:
+            pass
 
     def lire(self):
         texte = self.sender().text()

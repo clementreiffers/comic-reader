@@ -10,6 +10,8 @@ import time
 import zipfile
 import collections
 import rarfile
+import patoolib
+
 
 class COMICParser:
     def __init__(self, filename, *args):
@@ -82,9 +84,17 @@ class COMICParser:
         with zipfile.ZipFile(source_filename) as zf:
             zf.extractall(dest_dir)
 
-    def unrar(self, source_filename, dest_dir):
-        with rarfile.RarFile(source_filename) as rf:
-            rf.extractall(dest_dir)
+    def unrar(self, source_filename, dest_dir=None):
+        """
+        a = patoolib.extract_archive(source_filename)
+        try :
+            os.rename(a, dest_dir)
+        except :
+            pass
+        """
+        with rarfile.RarFile(source_filename) as file:
+            file.extract(file.namelist()[0])
+
 
 def is_image(filename):
     valid_image_extensions = ['.png', '.jpg', '.bmp']
@@ -114,6 +124,6 @@ def lire_bibliotheque():
     return T
 
 if __name__ == '__main__':
-    livre = COMICParser("spidersurf.cbz")
-    livre.read_book()
-    livre.generate_metadata()
+
+    livre = COMICParser("Tom_Corbett_Space_Cadet_v2_001.cbr")
+    livre.unrar("Tom_Corbett_Space_Cadet_v2_001.cbr", "Tom_Corbett_Space_Cadet_v2_001")
