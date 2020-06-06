@@ -51,6 +51,7 @@ class COMICParser:
 
         creation_time = time.ctime(os.path.getctime(self.filename))
         year = creation_time.split()[-1]
+        bookmark = 0
         try :
             T = lire_bibliotheque()
             a = 0
@@ -61,11 +62,11 @@ class COMICParser:
                 a+=1
             if etat == False :
                 file = open("biblio.txt", "a")
-                biblio = file.write(str(cover) + "$" + str(src) + "$" + str(title) + "$" + str(author) + "$" + str(creation_time) + "$" + str(year) + "$" + str(tags) + "$" + str(quality) + "\n")
+                biblio = file.write(str(cover) + "$" + str(src) + "$" + str(title) + "$" + str(author) + "$" + str(creation_time) + "$" + str(year) + "$" + str(tags) + "$" + str(quality) + "$" + str(bookmark) + "\n")
                 file.close()
         except :
             file = open("biblio.txt", "w")
-            biblio = file.write(str(cover) + "$" + str(src) + "$" + str(title) + "$" + str(author) + "$" + str(creation_time) + "$" + str(year) + "$" + str(tags) + "$" + str(quality) + "\n")
+            biblio = file.write(str(cover) + "$" + str(src) + "$" + str(title) + "$" + str(author) + "$" + str(creation_time) + "$" + str(year) + "$" + str(tags) + "$" + str(quality) + "$" + str(bookmark) + "\n")
             file.close()
 
         self._metadata = {"cover":cover, "title": title, "author":author, "year":year, "tags":tags, "quality":quality}

@@ -218,17 +218,17 @@ class FenetrePrincipale(QMainWindow):
                     self.tableWidget.setCellWidget(i+1, j, widget)
                     header.setSectionResizeMode(i+1, QHeaderView.Stretch)
 
-                elif j == len(T[i]):
+                elif j == len(T[i])-1:
                     self.btn = QPushButton("lire\n" + str(T[i][2]))
                     self.btn.clicked.connect(self.lire)
                     self.tableWidget.setCellWidget(i+1, j, self.btn)
 
-                elif j == len(T[i])+1:
+                elif j == len(T[i]):
                     self.btn = QPushButton("editer\n"+ str(T[i][2]))
                     self.btn.clicked.connect(self.editer)
                     self.tableWidget.setCellWidget(i+1, j, self.btn)
 
-                elif j == len(T[i])+2:
+                elif j == len(T[i])+1:
                     self.btn = QPushButton("supprimer\n"+ str(T[i][2]))
                     self.btn.clicked.connect(self.delete)
                     self.tableWidget.setCellWidget(i+1, j, self.btn)
@@ -258,6 +258,7 @@ class FenetrePrincipale(QMainWindow):
         self.year_temp = T[book][5]
         self.tags_temp = []
         self.quality_temp = T[book][7]
+        self.bookmark_temp = T[book][8]
 
 
         widget = QWidget()
@@ -323,13 +324,13 @@ class FenetrePrincipale(QMainWindow):
         if self.quality.text() != "":self.quality_temp = self.quality.text()
 
         print(str(self.T[self.book][2])+"/"+self.T[self.book][0])
-        T_book = [self.T[self.book][0], self.source_temp, self.title_temp, self.author_temp, self.creation_time_temp, self.year_temp, str(self.tags_temp), self.quality_temp]
+        T_book = [self.T[self.book][0], self.source_temp, self.title_temp, self.author_temp, self.creation_time_temp, self.year_temp, str(self.tags_temp), self.quality_temp, self.bookmark_temp]
         self.T[self.book] = T_book
 
         file = open("biblio.txt", "w")
         for i in range(len(self.T)-1):
 
-            biblio = file.write(str(self.T[i][0]) + "$" + str(self.T[i][1]) + "$" + str(self.T[i][2]) + "$" + str(self.T[i][3]) + "$" + str(self.T[i][4]) + "$" + str(self.T[i][5]) + "$" + str(self.T[i][6]) + "$" + str(self.T[i][7]) + "\n")
+            biblio = file.write(str(self.T[i][0]) + "$" + str(self.T[i][1]) + "$" + str(self.T[i][2]) + "$" + str(self.T[i][3]) + "$" + str(self.T[i][4]) + "$" + str(self.T[i][5]) + "$" + str(self.T[i][6]) + "$" + str(self.T[i][7]) + "$" + str(self.T[i][8]) + "\n")
         file.close()
         self.afficher_biblio()
 

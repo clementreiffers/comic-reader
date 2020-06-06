@@ -5,12 +5,38 @@ import comics as c
 class Page(QMainWindow):
     def __init__(self, nom):
         super().__init__()
+        self.filename = nom
         self.size = self.width()*0.7
         self.livre = c.COMICParser(nom)
-        self.pos = 0
-
+        self.T = self.lire_bibliotheque()
+        T = self.T
+        for i in T :
+            for j in i :
+                if j == self.filename :
+                    self.book = T.index(i)
+                    break
+        self.pos = int(T[self.book][8])
 
         self.app()
+    def lire_bibliotheque(self):
+        file = open("biblio.txt", 'r')
+        biblio = file.read()
+        T = [[]]
+        a = ''
+        lv = 0
+        for i in biblio :
+            a+= i
+            if i =='$':
+                a = a[0:-1]
+                T[lv].append(a)
+                a = ''
+            if i == "\n":
+                a = a[0:-1]
+                T[lv].append(a)
+                a = ''
+                T.append([])
+                lv+=1
+        return T
     def app(self):
         self.pageLayout = QVBoxLayout()
         self.buttonLayout = QHBoxLayout()
@@ -20,6 +46,8 @@ class Page(QMainWindow):
         a = 0
         for i in self.liste :
             btn = QPushButton(str(a))
+            if a == int(self.T[self.book][8]):
+                btn.setStyleSheet("background-color : black;color:white")
             btn.setMaximumWidth(40)
             btn.clicked.connect(self.changerPageAvecBtn)
             self.sw.addWidget(btn)
@@ -34,6 +62,7 @@ class Page(QMainWindow):
         self.widget = QWidget()
         self.widget.setLayout(self.pageLayout)
         self.setCentralWidget(self.widget)
+
 
         self.previous = QPushButton('←')
         self.previous.clicked.connect(self.changerPage)
@@ -83,6 +112,11 @@ class Page(QMainWindow):
 
         self.moins.setEnabled(True)
 
+        self.signet = QPushButton('ajouter un signet')
+        self.signet.clicked.connect(self.addBookmark)
+        self.buttonLayout.addWidget(self.previous)
+        self.qh.addWidget(self.signet)
+
         self.pageLayout.addLayout(self.qh)
         scsw = QScrollArea()
         w = QWidget()
@@ -94,19 +128,45 @@ class Page(QMainWindow):
         wid = QWidget()
         wid.setLayout(qh2)
         self.pageLayout.addWidget(wid)
-        scroll = QScrollArea()
+        self.scroll = QScrollArea()
+        self.scroll.setBackgroundRole(QPalette.Dark)
         w = QWidget()
         w.setLayout(self.stackedLayout)
-        scroll.setWidget(w)
-        scroll.setAlignment(Qt.AlignHCenter)
-        qh2.addWidget(scroll)
+        self.scroll.setWidget(w)
+        self.scroll.setAlignment(Qt.AlignHCenter)
+        qh2.addWidget(self.scroll)
         self.pageLayout.addLayout(self.buttonLayout)
+        self.stackedLayout.setCurrentIndex(self.pos)
+        self.spin.setValue(self.pos)
 
 
+
+    def addBookmark(self):
+        T = self.T
+        book = self.book
+        self.source_temp = T[book][1]
+        self.title_temp = T[book][2]
+        self.author_temp = T[book][3]
+        self.creation_time_temp = T[book][4]
+        self.year_temp = T[book][5]
+        self.tags_temp = []
+        self.quality_temp = T[book][7]
+        self.bookmark_temp = T[book][8]
+        self.bookmark_temp = self.pos
+        print(str(self.T[self.book][2])+"/"+self.T[self.book][0])
+        T_book = [self.T[self.book][0], self.source_temp, self.title_temp, self.author_temp, self.creation_time_temp, self.year_temp, str(self.tags_temp), self.quality_temp, self.bookmark_temp]
+        self.T[self.book] = T_book
+        print(self.bookmark_temp)
+        file = open("biblio.txt", "w")
+        for i in range(len(self.T)-1):
+
+            biblio = file.write(str(self.T[i][0]) + "$" + str(self.T[i][1]) + "$" + str(self.T[i][2]) + "$" + str(self.T[i][3]) + "$" + str(self.T[i][4]) + "$" + str(self.T[i][5]) + "$" + str(self.T[i][6]) + "$" + str(self.T[i][7]) + "$" + str(self.T[i][8]) + "\n")
+        file.close()
 
 
     def changerPageAvecBtn(self):
         self.stackedLayout.setCurrentIndex(int(self.sender().text()))
+        self.pos = int(self.sender().text())
     @pyqtSlot()
     def changerPage(self):
         texte = self.sender().text()
@@ -134,8 +194,10 @@ class Page(QMainWindow):
         self.stackedLayout.setCurrentIndex(self.pos)
 
     def zoom(self):
+
         try :
             texte = self.sender().text()
+            a = self.pos
             if texte == '+':
                 if self.size == 0.9:
                     self.moins.setEnabled(True)
@@ -152,5 +214,17 @@ class Page(QMainWindow):
                     self.moins.setEnabled(True)
                     self.size-=10
             self.app()
+            self.stackedLayout.setCurrentIndex(a)
+            self.pos = a
         except :
             ...
+
+    """
+    scale = self.display().scale() / 100
+    size = self.source().pageSize() # size provided by Poppler.Page
+    self.scale_animation = QtCore.QPropertyAnimation(self, "size")
+    self.scale_animation.setDuration(200)
+    self.scale_animation.setStartValue(self.size())
+    self.scale_animation.setEndValue(QtCore.QSize(size.width() * scale, size.height() * scale))
+    self.scale_animation.start()
+    """
