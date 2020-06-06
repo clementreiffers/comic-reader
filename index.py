@@ -18,8 +18,8 @@ class FenetrePrincipale(QMainWindow):
         self.setWindowIcon(QtGui.QIcon('spidermanicon.png'))
         self.setGeometry(200, 200, 1200, 500)
         self.filename = ""
-        self.BDtabs = []
-        self.nomTabs = []
+        self.BDtabs = [1]
+        self.nomTabs = ["bibliothèque"]
 
         self.toolbar = QToolBar("Bar d'outils")
         self.addToolBar(self.toolbar)
@@ -30,7 +30,7 @@ class FenetrePrincipale(QMainWindow):
         self.ouvrir.setIcon(QIcon("icons8-fichier-48.png"))
 
         self.biblio = QAction("Bibliothèque", self)
-        self.biblio.triggered.connect(self.afficher_biblio)
+        self.biblio.triggered.connect(self.addBi)
         self.biblio.setStatusTip("Pour afficher la bibliothèque")
 
         self.quit = QAction("exit", self)
@@ -85,8 +85,12 @@ class FenetrePrincipale(QMainWindow):
         self.tabs.setMovable(True)
 
         self.biblio = self.lire_bibliotheque()
-        self.afficher_biblio(self.biblio)
+        self.nouveaux_onglets()
 
+    def addBi(self):
+        self.BDtabs.append(1)
+        self.nomTabs.append("bibliothèque")
+        self.nouveaux_onglets()
 
     def download(self):
         try :
@@ -122,10 +126,12 @@ class FenetrePrincipale(QMainWindow):
         self.tabs.setTabPosition(QTabWidget.North)
         self.tabs.setTabsClosable(True)
         for i in range(len(self.BDtabs)):
-            self.tabs.addTab(p.Page(self.BDtabs[i-1]), self.nomTabs[i-1])
-            self.setCentralWidget(self.tabs)
-
-
+            if self.BDtabs[i-1] != 1 :
+                self.tabs.addTab(p.Page(self.BDtabs[i-1]), self.nomTabs[i-1])
+                self.setCentralWidget(self.tabs)
+            else :
+                self.tabs.addTab(self.afficher_biblio(), "Bibliothèque")
+                self.setCentralWidget(self.tabs)
 
     def au_revoir(self):
         partir = QAction('&Exit',self)
@@ -239,7 +245,7 @@ class FenetrePrincipale(QMainWindow):
             self.vBoxLayout.addWidget(self.tableWidget)
             widget = QWidget()
             widget.setLayout(self.vBoxLayout)
-            self.setCentralWidget(widget)
+            return widget
 
     def editer(self):
         texte = self.sender().text()
@@ -385,7 +391,6 @@ class FenetrePrincipale(QMainWindow):
                 if j == self.filename :
                     emplacement = T[T.index(i)][1]
                     break
-        print(emplacement)
         livre = c.COMICParser(emplacement)
         livre.read_book()
         self.BDtabs.append(emplacement)

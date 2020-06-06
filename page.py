@@ -44,6 +44,7 @@ class Page(QMainWindow):
         self.sw = QVBoxLayout()
         self.liste = self.livre.read_book()
         a = 0
+
         for i in self.liste :
             btn = QPushButton(str(a))
             if a == int(self.T[self.book][8]):
