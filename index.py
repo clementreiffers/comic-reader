@@ -17,6 +17,35 @@ class FenetrePrincipale(QMainWindow):
         self.setGeometry(200, 200, 1140, 500)
         self.setWindowIcon(QtGui.QIcon('spidermanicon.png'))
         self.setGeometry(200, 200, 1200, 500)
+
+
+
+        actOpen = QAction( QIcon( "icons8-fichier-48.png" ), "&Open", self )
+        actOpen.setStatusTip( "Ouvrir un fichier" )
+        actOpen.triggered.connect(self.charger)
+
+        
+        
+        actExit = QAction( QIcon( "icons8-porte-ouverte-40.png" ), "E&xit", self )
+        actExit.setShortcut( "Ctrl+Q" )
+        actExit.setStatusTip( "quitter l'application" )
+        actExit.triggered.connect( self.close )
+
+
+        actbiblio = QAction(QIcon( "biblio.png" ), "&Open", self)
+        actbiblio.setStatusTip( "ouvrir la bibliothèque" )
+        actbiblio.triggered.connect(self.addBi)
+       
+        toolbar = self.addToolBar( "Standard ToolBar" )
+        toolbar.addAction( actOpen )
+        toolbar.addAction(actbiblio)
+        toolbar.addSeparator()
+        toolbar.addAction( actExit )
+        
+
+        
+
+
         self.filename = ""
         self.BDtabs = [1]
         self.nomTabs = ["bibliothèque"]
@@ -32,22 +61,29 @@ class FenetrePrincipale(QMainWindow):
         self.biblio = QAction("Bibliothèque", self)
         self.biblio.triggered.connect(self.addBi)
         self.biblio.setStatusTip("Pour afficher la bibliothèque")
+        self.biblio.setIcon(QIcon("biblio.png"))
 
         self.quit = QAction("exit", self)
         self.quit.triggered.connect(self.quitter)
         self.quit.setStatusTip("Pour quitter")
+        self.quit.setIcon(QIcon("icons8-porte-ouverte-40.png"))
 
         self.dl = QAction("Télécharger des BD", self)
         self.dl.triggered.connect(self.download)
         self.dl.setStatusTip("Pour télécharger des Ouvrages")
+        self.dl.setIcon(QIcon("icons8-bande-dessinée-48.png"))
 
         self.close = QAction("Fermez l'onglet courant", self)
         self.close.triggered.connect(self.closeTab)
         self.close.setStatusTip("Pour télécharger des Ouvrages")
+        self.close.setIcon(QIcon("icons8-annuler-48.png"))
 
         self.onglet = QAction("Affichez les onglets", self)
         self.onglet.triggered.connect(self.afficher_onglets)
         self.onglet.setStatusTip("Pour afficher les onglets")
+        self.onglet.setIcon(QIcon("icons8-faire-défiler-48.png"))
+
+
 
         self.barreDeMenu = self.menuBar()
         self.menuFichier = self.barreDeMenu.addMenu("&Fichier")
@@ -68,8 +104,13 @@ class FenetrePrincipale(QMainWindow):
         self.menuLire = self.barreDeMenu.addMenu("&Lire")
         self.menuLire.addSeparator()
 
+
         self.menuAide = self.barreDeMenu.addMenu("&Aide")
         self.menuAide.addSeparator()
+
+        self.menuMusique = self.barreDeMenu.addMenu("&Musique")
+        self.menuMusique.addSeparator()
+
 
         self.ouvrir.setShortcut(QKeySequence("ctrl+o"))
         self.biblio.setShortcut(QKeySequence("ctrl+b"))
