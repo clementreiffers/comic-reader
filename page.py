@@ -228,3 +228,5 @@ class Page(QMainWindow):
             self.pos = a
         except :
             ...
+if __name__ == '__main__':
+    book = Page('spidersurf.cbz')

@@ -30,7 +30,7 @@ class FenetrePrincipale(QMainWindow):
 
 
 
-        actExit = QAction( QIcon( "icons8-porte-ouverte-40.png" ), "E&xit", self )
+        actExit = QAction( QIcon( "icons8-porte-ouverte-40.png" ), "&Exit", self )
         actExit.setShortcut( "Ctrl+Q" )
         actExit.setStatusTip( "quitter l'application" )
         actExit.triggered.connect( self.close )
@@ -40,11 +40,17 @@ class FenetrePrincipale(QMainWindow):
         actbiblio.setStatusTip( "ouvrir la bibliothèque" )
         actbiblio.triggered.connect(self.addBi)
 
+
+        actMusic = QAction(QIcon( "icons8-notes-de-musique-48.png" ), "&Open", self)
+        actMusic.setStatusTip( "ouvrir le lecteur de musique" )
+        actMusic.triggered.connect(self.init)
+
         toolbar = self.addToolBar( "Standard ToolBar" )
         toolbar.addAction( actOpen )
         toolbar.addAction(actbiblio)
         toolbar.addSeparator()
         toolbar.addAction( actExit )
+        toolbar.addAction(actMusic)
 
 
         self.filename = ""
@@ -103,13 +109,12 @@ class FenetrePrincipale(QMainWindow):
         self.menuEdition = self.barreDeMenu.addMenu("&Edition")
         self.menuEdition.addSeparator()
 
-        self.menuAffichage = self.barreDeMenu.addMenu("&Affichage")
-        self.menuAffichage.addAction(self.onglet)
-        self.menuAffichage.addSeparator()
-
         self.menuLire = self.barreDeMenu.addMenu("&Lire")
         self.menuLire.addSeparator()
 
+        self.menuAffichage = self.barreDeMenu.addMenu("&Affichage")
+        self.menuAffichage.addAction(self.onglet)
+        self.menuAffichage.addSeparator()
 
         self.menuAide = self.barreDeMenu.addMenu("&Aide")
         self.menuAide.addSeparator()
@@ -139,7 +144,7 @@ class FenetrePrincipale(QMainWindow):
     def addBi(self):
         self.BDtabs.append(1)
         self.nomTabs.append("bibliothèque")
-        self.nouveaux_onglets()
+        self.afficher_onglets()
 
     def download(self):
         webbrowser.open("http://www.openculture.com/2014/03/download-15000-free-golden-age-comics-from-the-digital-comic-museum.html")
@@ -178,7 +183,7 @@ class FenetrePrincipale(QMainWindow):
 
     def au_revoir(self):
         partir = QAction('&Exit',self)
-        partir.setShortcut('Ctrl+Q')
+        partir.setShortcut('Ctrl+q')
         partir.setStatusTip('Exit App')
         partir.triggered.connect(self.closeEvent)
         return partir
@@ -242,12 +247,7 @@ class FenetrePrincipale(QMainWindow):
         self.tableWidget.setItem(0, 9 , QTableWidgetItem("editer"))
         self.tableWidget.setItem(0, 10 , QTableWidgetItem("delete"))
         header = self.tableWidget.verticalHeader()
-
-
         for i in range(len(T)-1):
-            self.menuLire = self.menuBar()
-            self.menuLire = self.barreDeMenu.addMenu("&Lire")
-            self.menuLire.addSeparator()
             self.btn = QAction("lire " + T[i][2], self)
             self.btn.triggered.connect(self.lire)
             self.btn.setStatusTip("Lire cette Ouvrage")
@@ -381,7 +381,6 @@ class FenetrePrincipale(QMainWindow):
         if self.year.text() != "":self.year_temp = self.year.text()
         if self.quality.text() != "":self.quality_temp = self.quality.text()
 
-        print(str(self.T[self.book][2])+"/"+self.T[self.book][0])
         T_book = [self.T[self.book][0], self.source_temp, self.title_temp, self.author_temp, self.creation_time_temp, self.year_temp, str(self.tags_temp), self.quality_temp, self.bookmark_temp]
         self.T[self.book] = T_book
 
@@ -417,6 +416,9 @@ class FenetrePrincipale(QMainWindow):
 
     def charger(self):
         try :
+            if 1 in self.BDtabs :
+                self.BDtabs.pop(self.BDtabs.index(1))
+                self.nomTabs.pop(self.nomTabs.index("bibliothèque"))
             dialogue = QFileDialog()
             self.filename = dialogue.getOpenFileName(self,'Ouvrir fichier',filter='Comic Book Zip (*.cbz);;Comic Book Rar (*.cbr)')[0]
             livre = c.COMICParser(self.filename)
@@ -429,6 +431,8 @@ class FenetrePrincipale(QMainWindow):
                 nom += i
             nom = nom[::-1]
             self.nomTabs.append(nom)
+            self.BDtabs.append(1)
+            self.nomTabs.append("bibliothèque")
             self.afficher_onglets()
         except:
             pass
@@ -461,9 +465,9 @@ class FenetrePrincipale(QMainWindow):
 
     def yolo(self):
         self.titre = QLabel("aucun titre sélectionné")
-        self.song1 = QPushButton("LoadingSound")
-        self.pause = QPushButton("Pause")
-        self.play_it = QPushButton("Play")
+        self.song1 = QPushButton("charger une musique")
+        self.pause = QPushButton("||")
+        self.play_it = QPushButton("►")
         h_box = QHBoxLayout()
         h_box.addWidget(self.song1)
         h_box.addWidget(self.play_it)
