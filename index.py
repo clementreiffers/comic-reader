@@ -9,6 +9,7 @@ import subprocess
 from PyQt5 import QtGui
 import os
 import shutil
+import webbrowser
 
 class FenetrePrincipale(QMainWindow):
     def __init__(self):
@@ -119,7 +120,7 @@ class FenetrePrincipale(QMainWindow):
         self.tabs=QTabWidget()
         self.tabs.setTabPosition(QTabWidget.North)
         self.tabs.setTabsClosable(True)
-        self.tabs.tabCloseRequested.connect(self.closeTab)
+        self.tabs.tabCloseRequested.connect(self.download)
         self.tabs.setMovable(True)
 
         self.biblio = self.lire_bibliotheque()
@@ -131,15 +132,7 @@ class FenetrePrincipale(QMainWindow):
         self.nouveaux_onglets()
 
     def download(self):
-        try :
-            try :
-                #commande pour windows
-                subprocess.call("explorer " + "http://www.openculture.com/2014/03/download-15000-free-golden-age-comics-from-the-digital-comic-museum.html", shell=True)
-            except :
-                #commande pour les systèmes debian
-                subprocess.call("xdg-open " + "http://www.openculture.com/2014/03/download-15000-free-golden-age-comics-from-the-digital-comic-museum.html", shell=True)
-        except :
-            print("votre système n'est pas répertorié dans nos commandes")
+        webbrowser.open("http://www.openculture.com/2014/03/download-15000-free-golden-age-comics-from-the-digital-comic-museum.html")
 
 
     def quitter(self):
