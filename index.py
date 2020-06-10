@@ -12,6 +12,7 @@ import shutil
 from PyQt5.QtWidgets import (QWidget,QApplication,QPushButton,QVBoxLayout,QFileDialog,QHBoxLayout)
 import pygame
 pygame.init()
+import webbrowser
 
 class FenetrePrincipale(QMainWindow):
     def __init__(self):
@@ -27,8 +28,8 @@ class FenetrePrincipale(QMainWindow):
         actOpen.setStatusTip( "Ouvrir un fichier" )
         actOpen.triggered.connect(self.charger)
 
-        
-        
+
+
         actExit = QAction( QIcon( "icons8-porte-ouverte-40.png" ), "E&xit", self )
         actExit.setShortcut( "Ctrl+Q" )
         actExit.setStatusTip( "quitter l'application" )
@@ -38,15 +39,12 @@ class FenetrePrincipale(QMainWindow):
         actbiblio = QAction(QIcon( "biblio.png" ), "&Open", self)
         actbiblio.setStatusTip( "ouvrir la bibliothèque" )
         actbiblio.triggered.connect(self.addBi)
-       
+
         toolbar = self.addToolBar( "Standard ToolBar" )
         toolbar.addAction( actOpen )
         toolbar.addAction(actbiblio)
         toolbar.addSeparator()
         toolbar.addAction( actExit )
-        
-
-        
 
 
         self.filename = ""
@@ -123,7 +121,7 @@ class FenetrePrincipale(QMainWindow):
 
         self.ouvrir.setShortcut(QKeySequence("ctrl+o"))
         self.biblio.setShortcut(QKeySequence("ctrl+b"))
-        self.quit.setShortcut(QKeySequence("ctrl+q"))
+        self.quit.setShortcut(QKeySequence("ctrl+f"))
         self.close.setShortcut(QKeySequence("ctrl+w"))
         self.dl.setShortcut(QKeySequence("ctrl+d"))
         self.onglet.setShortcut(QKeySequence("ctrl+n"))
@@ -131,7 +129,7 @@ class FenetrePrincipale(QMainWindow):
         self.tabs=QTabWidget()
         self.tabs.setTabPosition(QTabWidget.North)
         self.tabs.setTabsClosable(True)
-        self.tabs.tabCloseRequested.connect(self.closeTab)
+        self.tabs.tabCloseRequested.connect(self.download)
         self.tabs.setMovable(True)
 
         self.biblio = self.lire_bibliotheque()
@@ -144,15 +142,7 @@ class FenetrePrincipale(QMainWindow):
         self.nouveaux_onglets()
 
     def download(self):
-        try :
-            try :
-                #commande pour windows
-                subprocess.call("explorer " + "http://www.openculture.com/2014/03/download-15000-free-golden-age-comics-from-the-digital-comic-museum.html", shell=True)
-            except :
-                #commande pour les systèmes debian
-                subprocess.call("xdg-open " + "http://www.openculture.com/2014/03/download-15000-free-golden-age-comics-from-the-digital-comic-museum.html", shell=True)
-        except :
-            print("votre système n'est pas répertorié dans nos commandes")
+        webbrowser.open("http://www.openculture.com/2014/03/download-15000-free-golden-age-comics-from-the-digital-comic-museum.html")
 
 
     def quitter(self):
@@ -250,7 +240,12 @@ class FenetrePrincipale(QMainWindow):
         self.tableWidget.setItem(0, 9 , QTableWidgetItem("editer"))
         self.tableWidget.setItem(0, 10 , QTableWidgetItem("delete"))
         header = self.tableWidget.verticalHeader()
+
+
         for i in range(len(T)-1):
+            self.menuLire = self.menuBar()
+            self.menuLire = self.barreDeMenu.addMenu("&Lire")
+            self.menuLire.addSeparator()
             self.btn = QAction("lire " + T[i][2], self)
             self.btn.triggered.connect(self.lire)
             self.btn.setStatusTip("Lire cette Ouvrage")
@@ -296,7 +291,11 @@ class FenetrePrincipale(QMainWindow):
             self.vBoxLayout.addWidget(self.tableWidget)
             widget = QWidget()
             widget.setLayout(self.vBoxLayout)
+            self.setCentralWidget(widget)
+        try :
             return widget
+        except:
+            ...
 
     def editer(self):
         texte = self.sender().text()
