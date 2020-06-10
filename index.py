@@ -411,7 +411,7 @@ class FenetrePrincipale(QMainWindow):
             biblio = file.write(str(self.T[i][0]) + "$" + str(self.T[i][1]) + "$" + str(self.T[i][2]) + "$" + str(self.T[i][3]) + "$" + str(self.T[i][4]) + "$" + str(self.T[i][5]) + "$" + str(self.T[i][6]) + "$" + str(self.T[i][7]) + "\n")
         file.close()
         shutil.rmtree(self.filename)
-        self.afficher_biblio()
+        self.afficher_onglets()
 
 
     def charger(self):
@@ -486,6 +486,7 @@ class FenetrePrincipale(QMainWindow):
         self.play_it.clicked.connect(self.play_the_songs)
 
         self.setCentralWidget(wid)
+        return wid
 
     def pause_the_songs(self):
         if self.playsound is None:

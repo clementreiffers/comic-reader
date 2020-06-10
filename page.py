@@ -17,6 +17,7 @@ class Page(QMainWindow):
                     break
         self.pos = int(T[self.book][8])
         self.pos_dep = self.pos
+        self.pos_av = self.pos
 
         self.app()
     def lire_bibliotheque(self):
@@ -46,11 +47,16 @@ class Page(QMainWindow):
         self.liste = self.livre.read_book()
         a = 0
         self.btn = []
+        self.btn_page_no_visit_and_no_bookmark = "color:black; background-color:white; border-radius:5px; padding:10px;border:0.5px solid grey"
+        self.btn_bookmark = "background-color : black;color:white;border-radius:5px; padding:10px;border:1px solid black"
+        self.btn_visit = "background-color:red;color:white; padding:10px;"
+        self.btn_bookmark_visit = "background-color : black;color:white;border-radius:5px; padding:10px;border:1px solid red"
         for i in self.liste :
             btn = QPushButton(str(a))
+            btn.setStyleSheet(self.btn_page_no_visit_and_no_bookmark)
             self.btn.append(btn)
             if a == int(self.T[self.book][8]):
-                self.btn[a].setStyleSheet("background-color : black;color:white")
+                self.btn[a].setStyleSheet(self.btn_bookmark)
             btn.setMaximumWidth(40)
             btn.clicked.connect(self.changerPageAvecBtn)
             self.sw.addWidget(btn)
@@ -98,13 +104,13 @@ class Page(QMainWindow):
         self.plus.setMaximumHeight(20)
         self.plus.setMinimumHeight(20)
 
-        self.plus.setStyleSheet("color:blue;font-size:15px;")
+        self.plus.setStyleSheet("color:blue;font-size:15px;border-radius:5px;")
 
         self.plus.setEnabled(True)
 
         self.moins = QPushButton('-')
         self.moins.clicked.connect(self.zoom)
-        self.moins.setStyleSheet("color:red;font-size:15px;")
+        self.moins.setStyleSheet("color:red;font-size:15px;border-radius:5px;")
         self.moins.setMaximumHeight(20)
         self.moins.setMinimumHeight(20)
         self.qh.addWidget(self.moins)
@@ -157,15 +163,24 @@ class Page(QMainWindow):
         self.T[self.book] = T_book
         file = open("biblio.txt", "w")
         for i in range(len(self.T)-1):
-            self.btn[self.pos_dep].setStyleSheet("background-color:white;color:black")
-            self.btn[self.bookmark_temp].setStyleSheet("background-color:black;color:white")
+            self.btn[self.pos_dep].setStyleSheet(self.btn_page_no_visit_and_no_bookmark)
+            self.btn[self.bookmark_temp].setStyleSheet(self.btn_bookmark)
             biblio = file.write(str(self.T[i][0]) + "$" + str(self.T[i][1]) + "$" + str(self.T[i][2]) + "$" + str(self.T[i][3]) + "$" + str(self.T[i][4]) + "$" + str(self.T[i][5]) + "$" + str(self.T[i][6]) + "$" + str(self.T[i][7]) + "$" + str(self.T[i][8]) + "\n")
         file.close()
+        self.pos_dep = self.bookmark_temp
 
 
     def changerPageAvecBtn(self):
-        self.stackedLayout.setCurrentIndex(int(self.sender().text()))
         self.pos = int(self.sender().text())
+        self.stackedLayout.setCurrentIndex(self.pos)
+        for i in self.btn :
+            if self.pos != self.pos_dep :
+                i.setStyleSheet(self.btn_page_no_visit_and_no_bookmark)
+                self.btn[self.pos].setStyleSheet(self.btn_visit)
+        if self.pos_dep != self.pos :
+            self.btn[self.pos_dep].setStyleSheet(self.btn_bookmark)
+        else :
+            self.btn[self.pos_dep].setStyleSheet(self.btn_bookmark_visit)
 
     @pyqtSlot()
     def changerPage(self):
@@ -173,35 +188,53 @@ class Page(QMainWindow):
         if texte == '→':
             if self.pos == len(self.liste)-1:
                 self.previous.setEnabled(True)
-                self.previous.setStyleSheet("color:white; background-color:green;")
-                self.next.setStyleSheet("color:white; background-color:white;")
+                self.previous.setStyleSheet("color:white; background-color:green;border-radius:5px;")
+                self.next.setStyleSheet("color:white; background-color:white;border-radius:5px;")
                 self.next.setEnabled(False)
                 pass
 
             else:
                 self.previous.setEnabled(True)
                 self.next.setEnabled(True)
-                self.previous.setStyleSheet("color:white; background-color:green;")
-                self.next.setStyleSheet("color:white; background-color:green;")
+                self.previous.setStyleSheet("color:white; background-color:green;border-radius:5px;")
+                self.next.setStyleSheet("color:white; background-color:green;border-radius:5px;")
 
                 self.pos+=1
             self.spin.setValue(self.spin.value()+1)
         elif texte == '←' :
             if self.pos ==0:
                 self.next.setEnabled(True)
-                self.next.setStyleSheet("color:white; background-color:green;")
-                self.previous.setStyleSheet("color:white; background-color:white;")
+                self.next.setStyleSheet("color:white; background-color:green;border-radius:5px;")
+                self.previous.setStyleSheet("color:white; background-color:white;border-radius:5px;")
                 self.previous.setEnabled(False)
                 pass
             else :
                 self.previous.setEnabled(True)
                 self.next.setEnabled(True)
-                self.previous.setStyleSheet("color:white; background-color:green;")
-                self.next.setStyleSheet("color:white; background-color:green;")
+                self.previous.setStyleSheet("color:white; background-color:green;border-radius:5px;")
+                self.next.setStyleSheet("color:white; background-color:green;border-radius:5px;")
                 self.pos-=1
             self.spin.setValue(self.spin.value()-1)
         self.pos = self.spin.value()
         self.stackedLayout.setCurrentIndex(self.pos)
+        self.btn[self.pos_dep].setStyleSheet(self.btn_bookmark)
+
+        for i in self.btn :
+            if self.pos != self.pos_dep :
+                i.setStyleSheet(self.btn_page_no_visit_and_no_bookmark)
+                self.btn[self.pos].setStyleSheet(self.btn_visit)
+        self.btn[self.pos_dep].setStyleSheet(self.btn_bookmark)
+
+        if self.pos != self.pos_dep :
+            self.btn[self.pos].setStyleSheet(self.btn_visit)
+        else :
+            self.btn[self.pos].setStyleSheet(self.btn_bookmark_visit)
+
+        if self.pos -1!= self.pos_dep :
+            self.btn[self.pos-1].setStyleSheet(self.btn_page_no_visit_and_no_bookmark)
+        if self.pos +1!= self.pos_dep :
+            self.btn[self.pos+1].setStyleSheet(self.btn_page_no_visit_and_no_bookmark)
+
 
     def zoom(self):
 
