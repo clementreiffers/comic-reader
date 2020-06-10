@@ -9,15 +9,18 @@ import subprocess
 from PyQt5 import QtGui
 import os
 import shutil
+from PyQt5.QtWidgets import (QWidget,QApplication,QPushButton,QVBoxLayout,QFileDialog,QHBoxLayout)
+import pygame
+pygame.init()
 
 class FenetrePrincipale(QMainWindow):
     def __init__(self):
         super().__init__()
+
         self.setWindowTitle('Liseuse')
         self.setGeometry(200, 200, 1140, 500)
         self.setWindowIcon(QtGui.QIcon('spidermanicon.png'))
         self.setGeometry(200, 200, 1200, 500)
-
 
 
         actOpen = QAction( QIcon( "icons8-fichier-48.png" ), "&Open", self )
@@ -83,6 +86,11 @@ class FenetrePrincipale(QMainWindow):
         self.onglet.setStatusTip("Pour afficher les onglets")
         self.onglet.setIcon(QIcon("icons8-faire-défiler-48.png"))
 
+        self.music = QAction("Un peu de musique ?", self)
+        self.music.triggered.connect(self.init)
+        self.music.setStatusTip("Pour ecouter de la musique")
+        self.music.setIcon(QIcon("icons8-notes-de-musique-48.png"))
+
 
 
         self.barreDeMenu = self.menuBar()
@@ -109,6 +117,7 @@ class FenetrePrincipale(QMainWindow):
         self.menuAide.addSeparator()
 
         self.menuMusique = self.barreDeMenu.addMenu("&Musique")
+        self.menuMusique.addAction(self.music)
         self.menuMusique.addSeparator()
 
 
@@ -127,6 +136,7 @@ class FenetrePrincipale(QMainWindow):
 
         self.biblio = self.lire_bibliotheque()
         self.nouveaux_onglets()
+
 
     def addBi(self):
         self.BDtabs.append(1)
@@ -442,10 +452,59 @@ class FenetrePrincipale(QMainWindow):
         nom = nom[::-1]
         self.nomTabs.append(nom)
         self.afficher_onglets()
+    def init(self):
+        self.playsound = None
+        self.pause = None
+
+        self.yolo()
+
+    def yolo(self):
+        self.song1 = QPushButton("LoadingSound")
+        self.pause = QPushButton("Pause")
+        self.play_it = QPushButton("Play")
+        h_box = QHBoxLayout()
+        h_box.addWidget(self.song1)
+        h_box.addWidget(self.play_it)
+        h_box.addWidget(self.pause)
+        v_box = QVBoxLayout()
+        
+        v_box.addLayout(h_box)
+        wid = QWidget()
+        wid.setLayout(v_box)
+        
+        wid.setWindowTitle("Song Mixer 1.0")
+
+        self.song1.clicked.connect(self.song1_open)
+        self.pause.clicked.connect(self.pause_the_songs)            
+        self.play_it.clicked.connect(self.play_the_songs)
+
+        self.setCentralWidget(wid)
+        
+        
+
+    def pause_the_songs(self):
+        if self.playsound is None:
+            self.pause.setText("UnPause")
+            self.playsound = "pause"
+            pygame.mixer.music.pause()
+        else:
+            self.pause.setText("Pause")
+            self.playsound = None  
+            pygame.mixer.music.unpause()            
+
+    def song1_open(self):
+        file_name = QFileDialog.getOpenFileName(self,"Open",os.getenv("HOME"))
+        self.data1 = file_name[0]
+
+    def play_the_songs(self):                                     
+        self.playsound = pygame.mixer.init()        
+        pygame.mixer.music.load(self.data1)
+        pygame.mixer.music.play() 
 
 def printArray(T):
     for i in T :
         print(i)
+
 
 
 app = QCoreApplication.instance()
