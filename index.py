@@ -24,8 +24,8 @@ class FenetrePrincipale(QMainWindow):
         actOpen.setStatusTip( "Ouvrir un fichier" )
         actOpen.triggered.connect(self.charger)
 
-        
-        
+
+
         actExit = QAction( QIcon( "icons8-porte-ouverte-40.png" ), "E&xit", self )
         actExit.setShortcut( "Ctrl+Q" )
         actExit.setStatusTip( "quitter l'application" )
@@ -35,15 +35,12 @@ class FenetrePrincipale(QMainWindow):
         actbiblio = QAction(QIcon( "biblio.png" ), "&Open", self)
         actbiblio.setStatusTip( "ouvrir la bibliothèque" )
         actbiblio.triggered.connect(self.addBi)
-       
+
         toolbar = self.addToolBar( "Standard ToolBar" )
         toolbar.addAction( actOpen )
         toolbar.addAction(actbiblio)
         toolbar.addSeparator()
         toolbar.addAction( actExit )
-        
-
-        
 
 
         self.filename = ""
@@ -114,7 +111,7 @@ class FenetrePrincipale(QMainWindow):
 
         self.ouvrir.setShortcut(QKeySequence("ctrl+o"))
         self.biblio.setShortcut(QKeySequence("ctrl+b"))
-        self.quit.setShortcut(QKeySequence("ctrl+q"))
+        self.quit.setShortcut(QKeySequence("ctrl+f"))
         self.close.setShortcut(QKeySequence("ctrl+w"))
         self.dl.setShortcut(QKeySequence("ctrl+d"))
         self.onglet.setShortcut(QKeySequence("ctrl+n"))
@@ -286,7 +283,8 @@ class FenetrePrincipale(QMainWindow):
             self.vBoxLayout.addWidget(self.tableWidget)
             widget = QWidget()
             widget.setLayout(self.vBoxLayout)
-            return widget
+            self.setCentralWidget(widget)
+        return widget
 
     def editer(self):
         texte = self.sender().text()
