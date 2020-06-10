@@ -81,8 +81,6 @@ class FenetrePrincipale(QMainWindow):
         self.onglet.setStatusTip("Pour afficher les onglets")
         self.onglet.setIcon(QIcon("icons8-faire-défiler-48.png"))
 
-
-
         self.barreDeMenu = self.menuBar()
         self.menuFichier = self.barreDeMenu.addMenu("&Fichier")
         self.menuFichier.addAction(self.ouvrir)
@@ -230,7 +228,12 @@ class FenetrePrincipale(QMainWindow):
         self.tableWidget.setItem(0, 9 , QTableWidgetItem("editer"))
         self.tableWidget.setItem(0, 10 , QTableWidgetItem("delete"))
         header = self.tableWidget.verticalHeader()
+
+
         for i in range(len(T)-1):
+            self.menuLire = self.menuBar()
+            self.menuLire = self.barreDeMenu.addMenu("&Lire")
+            self.menuLire.addSeparator()
             self.btn = QAction("lire " + T[i][2], self)
             self.btn.triggered.connect(self.lire)
             self.btn.setStatusTip("Lire cette Ouvrage")
@@ -277,7 +280,10 @@ class FenetrePrincipale(QMainWindow):
             widget = QWidget()
             widget.setLayout(self.vBoxLayout)
             self.setCentralWidget(widget)
-        return widget
+        try :
+            return widget
+        except:
+            ...
 
     def editer(self):
         texte = self.sender().text()

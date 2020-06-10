@@ -16,6 +16,7 @@ class Page(QMainWindow):
                     self.book = T.index(i)
                     break
         self.pos = int(T[self.book][8])
+        self.pos_dep = self.pos
 
         self.app()
     def lire_bibliotheque(self):
@@ -44,11 +45,12 @@ class Page(QMainWindow):
         self.sw = QVBoxLayout()
         self.liste = self.livre.read_book()
         a = 0
-
+        self.btn = []
         for i in self.liste :
             btn = QPushButton(str(a))
+            self.btn.append(btn)
             if a == int(self.T[self.book][8]):
-                btn.setStyleSheet("background-color : black;color:white")
+                self.btn[a].setStyleSheet("background-color : black;color:white")
             btn.setMaximumWidth(40)
             btn.clicked.connect(self.changerPageAvecBtn)
             self.sw.addWidget(btn)
@@ -72,8 +74,6 @@ class Page(QMainWindow):
         self.previous.setMinimumWidth(50)
         self.previous.setMaximumHeight(50)
         self.previous.setMinimumHeight(50)
-        self.previous.setStyleSheet("font-size:50px; color : green;padding-bottom:15px;")
-        self.previous.setEnabled(False)
 
 
 
@@ -90,7 +90,6 @@ class Page(QMainWindow):
         self.next.setMinimumWidth(50)
         self.next.setMaximumHeight(50)
         self.next.setMinimumHeight(50)
-        self.next.setStyleSheet("font-size:50px; color : green;padding-bottom:15px;")
         self.next.setEnabled(True)
 
         self.qh = QHBoxLayout()
@@ -160,7 +159,8 @@ class Page(QMainWindow):
         print(self.bookmark_temp)
         file = open("biblio.txt", "w")
         for i in range(len(self.T)-1):
-
+            self.btn[self.pos_dep].setStyleSheet("background-color:white;color:black")
+            self.btn[self.bookmark_temp].setStyleSheet("background-color:black;color:white")
             biblio = file.write(str(self.T[i][0]) + "$" + str(self.T[i][1]) + "$" + str(self.T[i][2]) + "$" + str(self.T[i][3]) + "$" + str(self.T[i][4]) + "$" + str(self.T[i][5]) + "$" + str(self.T[i][6]) + "$" + str(self.T[i][7]) + "$" + str(self.T[i][8]) + "\n")
         file.close()
 
@@ -168,27 +168,38 @@ class Page(QMainWindow):
     def changerPageAvecBtn(self):
         self.stackedLayout.setCurrentIndex(int(self.sender().text()))
         self.pos = int(self.sender().text())
+
     @pyqtSlot()
     def changerPage(self):
         texte = self.sender().text()
         if texte == '→':
             if self.pos == len(self.liste)-1:
                 self.previous.setEnabled(True)
+                self.previous.setStyleSheet("color:white; background-color:green;")
+                self.next.setStyleSheet("color:white; background-color:white;")
                 self.next.setEnabled(False)
+                pass
 
             else:
                 self.previous.setEnabled(True)
                 self.next.setEnabled(True)
+                self.previous.setStyleSheet("color:white; background-color:green;")
+                self.next.setStyleSheet("color:white; background-color:green;")
+
                 self.pos+=1
             self.spin.setValue(self.spin.value()+1)
         elif texte == '←' :
             if self.pos ==0:
                 self.next.setEnabled(True)
+                self.next.setStyleSheet("color:white; background-color:green;")
+                self.previous.setStyleSheet("color:white; background-color:white;")
                 self.previous.setEnabled(False)
+                pass
             else :
                 self.previous.setEnabled(True)
                 self.next.setEnabled(True)
-
+                self.previous.setStyleSheet("color:white; background-color:green;")
+                self.next.setStyleSheet("color:white; background-color:green;")
                 self.pos-=1
             self.spin.setValue(self.spin.value()-1)
         self.pos = self.spin.value()
