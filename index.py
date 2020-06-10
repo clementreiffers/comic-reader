@@ -166,6 +166,8 @@ class FenetrePrincipale(QMainWindow):
         self.tabs=QTabWidget()
         self.tabs.setTabPosition(QTabWidget.North)
         self.tabs.setTabsClosable(True)
+        self.tabs.tabCloseRequested.connect(self.closeTab)
+        self.tabs.setMovable(True)
         for i in range(len(self.BDtabs)):
             if self.BDtabs[i-1] != 1 :
                 self.tabs.addTab(p.Page(self.BDtabs[i-1]), self.nomTabs[i-1])
@@ -480,8 +482,6 @@ class FenetrePrincipale(QMainWindow):
         self.play_it.clicked.connect(self.play_the_songs)
 
         self.setCentralWidget(wid)
-
-
 
     def pause_the_songs(self):
         if self.playsound is None:

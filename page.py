@@ -228,13 +228,3 @@ class Page(QMainWindow):
             self.pos = a
         except :
             ...
-
-    """
-    scale = self.display().scale() / 100
-    size = self.source().pageSize() # size provided by Poppler.Page
-    self.scale_animation = QtCore.QPropertyAnimation(self, "size")
-    self.scale_animation.setDuration(200)
-    self.scale_animation.setStartValue(self.size())
-    self.scale_animation.setEndValue(QtCore.QSize(size.width() * scale, size.height() * scale))
-    self.scale_animation.start()
-    """
