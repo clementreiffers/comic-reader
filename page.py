@@ -153,10 +153,8 @@ class Page(QMainWindow):
         self.quality_temp = T[book][7]
         self.bookmark_temp = T[book][8]
         self.bookmark_temp = self.pos
-        print(str(self.T[self.book][2])+"/"+self.T[self.book][0])
         T_book = [self.T[self.book][0], self.source_temp, self.title_temp, self.author_temp, self.creation_time_temp, self.year_temp, str(self.tags_temp), self.quality_temp, self.bookmark_temp]
         self.T[self.book] = T_book
-        print(self.bookmark_temp)
         file = open("biblio.txt", "w")
         for i in range(len(self.T)-1):
             self.btn[self.pos_dep].setStyleSheet("background-color:white;color:black")
