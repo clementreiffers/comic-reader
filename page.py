@@ -80,6 +80,7 @@ class Page(QMainWindow):
         self.previous.setMinimumWidth(50)
         self.previous.setMaximumHeight(50)
         self.previous.setMinimumHeight(50)
+        self.previous.setShortcut(QKeySequence("Left"))
 
 
 
@@ -97,33 +98,42 @@ class Page(QMainWindow):
         self.next.setMaximumHeight(50)
         self.next.setMinimumHeight(50)
         self.next.setEnabled(True)
+        self.next.setShortcut(QKeySequence("Right"))
+
 
         self.qh = QHBoxLayout()
         self.plus = QPushButton('+')
         self.plus.clicked.connect(self.zoom)
-        self.plus.setMaximumHeight(20)
-        self.plus.setMinimumHeight(20)
+        self.plus.setMaximumHeight(30)
+        self.plus.setMinimumHeight(30)
 
-        self.plus.setStyleSheet("color:blue;font-size:15px;border-radius:5px;")
+        self.plus.setStyleSheet("color:white;font-size:15px;border-radius:5px;background-color:#ff451d;")
 
         self.plus.setEnabled(True)
 
         self.moins = QPushButton('-')
         self.moins.clicked.connect(self.zoom)
-        self.moins.setStyleSheet("color:red;font-size:15px;border-radius:5px;")
-        self.moins.setMaximumHeight(20)
-        self.moins.setMinimumHeight(20)
+        self.moins.setStyleSheet("color:white;font-size:15px;border-radius:5px;background-color:#1d57ff;")
+        self.moins.setMaximumHeight(30)
+        self.moins.setMinimumHeight(30)
         self.qh.addWidget(self.moins)
         self.qh.addWidget(self.plus)
 
         self.moins.setEnabled(True)
 
-        self.signet = QPushButton('ajouter un signet')
+        self.signet = QPushButton('')
         self.signet.clicked.connect(self.addBookmark)
         self.buttonLayout.addWidget(self.previous)
         self.qh.addWidget(self.signet)
+        self.signet.setStyleSheet("color:white;background-color:black;border-radius:5px;")
+        icon = QPixmap("signet.png")
+        self.signet.setIcon(QIcon(icon))
+        self.signet.setIconSize(icon.size()*0.03)
+        self.signet.setMaximumHeight(30)
+        self.signet.setMinimumHeight(30)
 
         self.pageLayout.addLayout(self.qh)
+        self.pageLayout.addWidget(QLabel("<center>Utilisez les flêches directionnelles pour contrôler la liseuse !</center>"))
         scsw = QScrollArea()
         w = QWidget()
         w.setLayout(self.sw)
@@ -174,9 +184,8 @@ class Page(QMainWindow):
         self.pos = int(self.sender().text())
         self.stackedLayout.setCurrentIndex(self.pos)
         for i in self.btn :
-            if self.pos != self.pos_dep :
-                i.setStyleSheet(self.btn_page_no_visit_and_no_bookmark)
-                self.btn[self.pos].setStyleSheet(self.btn_visit)
+            i.setStyleSheet(self.btn_page_no_visit_and_no_bookmark)
+            self.btn[self.pos].setStyleSheet(self.btn_visit)
         if self.pos_dep != self.pos :
             self.btn[self.pos_dep].setStyleSheet(self.btn_bookmark)
         else :
@@ -230,9 +239,9 @@ class Page(QMainWindow):
         else :
             self.btn[self.pos].setStyleSheet(self.btn_bookmark_visit)
 
-        if self.pos -1!= self.pos_dep :
+        if self.pos -1!= self.pos_dep and self.pos-1>=0:
             self.btn[self.pos-1].setStyleSheet(self.btn_page_no_visit_and_no_bookmark)
-        if self.pos +1!= self.pos_dep :
+        if self.pos +1!= self.pos_dep and self.pos+1<=len(self.livre.read_book())-1:
             self.btn[self.pos+1].setStyleSheet(self.btn_page_no_visit_and_no_bookmark)
 
 

@@ -130,6 +130,7 @@ class FenetrePrincipale(QMainWindow):
         self.close.setShortcut(QKeySequence("ctrl+w"))
         self.dl.setShortcut(QKeySequence("ctrl+d"))
         self.onglet.setShortcut(QKeySequence("ctrl+n"))
+        self.music.setShortcut(QKeySequence("ctrl+m"))
 
         self.tabs=QTabWidget()
         self.tabs.setTabPosition(QTabWidget.North)
@@ -231,6 +232,23 @@ class FenetrePrincipale(QMainWindow):
     def afficher_biblio(self, T=None):
         self.T = self.lire_bibliotheque()
         T = self.T
+
+        etat = True
+        for i in range(len(T)-1) :
+            try :
+                if not checkFileExistance(T[i][1]):
+                    etat = False
+            except:
+                etat = False
+
+        if etat == False :
+            file = open('biblio.txt', 'w')
+            file.close()
+            self.T = self.lire_bibliotheque()
+            T = self.T
+
+
+
         self.tableWidget = QTableWidget()
         self.tableWidget.setColumnCount(11)
         self.tableWidget.setRowCount(len(T))
@@ -512,6 +530,15 @@ class FenetrePrincipale(QMainWindow):
 def printArray(T):
     for i in T :
         print(i)
+
+def checkFileExistance(filePath):
+    try:
+        with open(filePath, 'r') as f:
+            return True
+    except FileNotFoundError as e:
+        return False
+    except IOError as e:
+        return False
 
 
 
