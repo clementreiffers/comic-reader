@@ -422,6 +422,7 @@ class FenetrePrincipale(QMainWindow):
                 if j == self.filename :
                     self.book = T.index(i)
                     break
+        print(self.book)
         self.tableWidget.removeRow(self.book)
         self.T.pop(self.book)
         file = open("biblio.txt", "w")
@@ -541,12 +542,48 @@ def checkFileExistance(filePath):
         return False
 
 
+StyleSheet = '''
+QPushButton#plus {
+    color:white;
+    font-size:15px;
+    border-radius:10px;
+    background-color:#1d57ff;
 
+}
+
+QPushButton#plus:hover {
+    background-color: white;
+    border : 2px solid #1d57ff;
+    color: #1d57ff;
+}
+
+QPushButton#plus:pressed {
+    background-color: red;
+    border : none;
+}
+QPushButton#moins {
+    background-color: orange;
+    border-radius: 10px;        /* круглый */
+}
+
+QPushButton#moins:hover {
+    background-color: white;
+    border : 2px solid orange;
+    color: orange;
+}
+
+QPushButton#moins:pressed {
+    background-color: red;
+    border : none;
+}
+'''
 app = QCoreApplication.instance()
+
 if app == None:
     app = QApplication([''])
 
 window = FenetrePrincipale()
+window.setStyleSheet(StyleSheet)
 window.show()
 
 app.exec()

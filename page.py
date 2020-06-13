@@ -10,11 +10,11 @@ class Page(QMainWindow):
         self.livre = c.COMICParser(nom)
         self.T = self.lire_bibliotheque()
         T = self.T
+        self.book = 0
         for i in T :
             for j in i :
-                if j == self.filename :
+            	if j == self.filename :
                     self.book = T.index(i)
-                    break
         self.pos = int(T[self.book][8])
         self.pos_dep = self.pos
         self.pos_av = self.pos
@@ -100,20 +100,17 @@ class Page(QMainWindow):
         self.next.setEnabled(True)
         self.next.setShortcut(QKeySequence("Right"))
 
-
         self.qh = QHBoxLayout()
-        self.plus = QPushButton('+')
+        self.plus = QPushButton('+', objectName='plus')
         self.plus.clicked.connect(self.zoom)
         self.plus.setMaximumHeight(30)
         self.plus.setMinimumHeight(30)
 
-        self.plus.setStyleSheet("color:white;font-size:15px;border-radius:5px;background-color:#ff451d;")
 
         self.plus.setEnabled(True)
 
-        self.moins = QPushButton('-')
+        self.moins = QPushButton('-', objectName='moins')
         self.moins.clicked.connect(self.zoom)
-        self.moins.setStyleSheet("color:white;font-size:15px;border-radius:5px;background-color:#1d57ff;")
         self.moins.setMaximumHeight(30)
         self.moins.setMinimumHeight(30)
         self.qh.addWidget(self.moins)
