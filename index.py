@@ -17,10 +17,9 @@ class FenetrePrincipale(QMainWindow):
     def __init__(self):
         super().__init__()
         pygame.init()
-
+        self.setObjectName('page')
         self.lire_css()
         self.setStyleSheet(self.StyleSheet)
-
 
         self.setWindowTitle('Liseuse')
         self.setGeometry(200, 200, 1140, 500)
@@ -328,6 +327,7 @@ class FenetrePrincipale(QMainWindow):
             widget = QWidget()
             widget.setLayout(self.vBoxLayout)
             self.setCentralWidget(widget)
+            widget.setObjectName('page')
         try :
             return widget
         except:
@@ -575,12 +575,12 @@ class FenetrePrincipale(QMainWindow):
 
             gridLayout2.addWidget(btn, *positions[i])
 
-        images = os.listdir('fonds_btn')
+        images = os.listdir('fonds_sys')
         gridLayout3 = QGridLayout()
         n = 0
         positions = [(i,j) for i in range(1,int(len(images))) for j in range(8)]
         for i in range(len(images)) :
-            img = QPixmap('fonds_btn/'+images[i])
+            img = QPixmap('fonds_sys/'+images[i])
             btn = QRadioButton(images[i], objectName='changeStyle')
             btn.clicked.connect(self.edit_css_texture_interface)
             size = 100
@@ -619,21 +619,21 @@ class FenetrePrincipale(QMainWindow):
 
     def edit_css_texture_scroll_btn(self):
         file = open("stylesheet_qscrollarea_btn.css", 'w')
-        style = '''QScrollArea#scsw {background-image : url('fonds_btn/''' + self.sender().text() +'''');}'''
+        style = '''QScrollArea#scsw {background-image : url('fonds_btn/''' + self.sender().text() +'''');border-radius: 10px;}'''
         file.write(style)
         file.close()
         self.lire_css()
 
     def edit_css_texture_scroll_img(self):
         file = open("stylesheet_qscrollarea_img.css", 'w')
-        style = '''QScrollArea#scroll {background-image : url('fonds_img/''' + self.sender().text() +'''');}'''
+        style = '''QScrollArea#scroll {background-image : url('fonds_img/''' + self.sender().text() +'''');border-radius: 10px;}'''
         file.write(style)
         file.close()
         self.lire_css()
 
     def edit_css_texture_interface(self):
         file = open("stylesheet_interface.css", 'w')
-        style = '''QWidget#page {background-image : url('fonds_img/''' + self.sender().text() +'''');}'''
+        style = '''QWidget#page {background-image : url('fonds_sys/''' + self.sender().text() +'''');border:none;}'''
         file.write(style)
         file.close()
         self.lire_css()

@@ -138,6 +138,10 @@ class Page(QMainWindow):
         self.signet.setMaximumWidth(420)
         self.signet.setMinimumWidth(420)
 
+        self.plus.setShortcut(QKeySequence("ctrl++"))
+        self.moins.setShortcut(QKeySequence("ctrl+-"))
+
+
         self.pageLayout.addLayout(self.qh)
         self.pageLayout.addWidget(QLabel("<center>Utilisez les flêches directionnelles pour contrôler la liseuse !</center>"))
         scsw = QScrollArea(objectName="scsw")
