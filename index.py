@@ -539,18 +539,19 @@ class FenetrePrincipale(QMainWindow):
         images = os.listdir('fonds')
         gridLayout = QGridLayout()
         n = 0
+        positions = [(i,j) for i in range(1,int(len(images))) for j in range(3)]
         for i in range(len(images)) :
             img = QPixmap('fonds/'+images[i])
             btn = QPushButton(images[i])
             btn.setStyleSheet("font-size:1px;")
             btn.clicked.connect(self.edit_css)
-            size = 200
+            size = 100
             btn.setMaximumWidth(size)
             btn.setMaximumHeight(size)
             btn.setIcon(QIcon(img))
             btn.setIconSize(QSize(size, size))
 
-            gridLayout.addWidget(btn, n, i)
+            gridLayout.addWidget(btn, *positions[i])
         qv = QVBoxLayout()
         qv.addWidget(QLabel("<center>fond du choix des numéros de page \n N.B. : vous pouvez rajouter vous même des images si vous le voulez dans le dossier fonds</center>"))
         qv.addLayout(gridLayout)
@@ -571,6 +572,7 @@ class FenetrePrincipale(QMainWindow):
         file.write(style)
         file.close()
         self.lire_css()
+        self.afficher_onglets()
 
 def printArray(T):
     for i in T :
