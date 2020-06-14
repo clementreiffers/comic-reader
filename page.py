@@ -49,7 +49,7 @@ class Page(QMainWindow):
         self.btn = []
         self.btn_page_no_visit_and_no_bookmark = "color:black; background-color:white; border-radius:5px; padding:10px;border:0.5px solid grey"
         self.btn_bookmark = "background-color : black;color:white;border-radius:5px; padding:10px;border:1px solid black"
-        self.btn_visit = "background-color:red;color:white; padding:10px;"
+        self.btn_visit = "background-color:red;color:white; padding:10px;border-radius:5px;"
         self.btn_bookmark_visit = "background-color : black;color:white;border-radius:5px; padding:10px;border:1px solid red"
         for i in self.liste :
             btn = QPushButton(str(a))
@@ -73,7 +73,7 @@ class Page(QMainWindow):
         self.setCentralWidget(self.widget)
 
 
-        self.previous = QPushButton('←')
+        self.previous = QPushButton('←', objectName='previous')
         self.previous.clicked.connect(self.changerPage)
         self.buttonLayout.addWidget(self.previous)
         self.previous.setMaximumWidth(50)
@@ -87,10 +87,11 @@ class Page(QMainWindow):
         self.spin = QSpinBox()
         self.spin.setMaximum(len(self.liste)-1)
         self.spin.setMinimum(0)
+        self.spin.setMinimumWidth(self.width())
         self.spin.valueChanged.connect(self.changerPage)
         self.buttonLayout.addWidget(self.spin)
 
-        self.next = QPushButton('→')
+        self.next = QPushButton('→', objectName='next')
         self.next.clicked.connect(self.changerPage)
         self.buttonLayout.addWidget(self.next)
         self.next.setMaximumWidth(50)
@@ -100,6 +101,7 @@ class Page(QMainWindow):
         self.next.setEnabled(True)
         self.next.setShortcut(QKeySequence("Right"))
 
+        self.buttonLayout.setAlignment(Qt.AlignCenter)
         self.qh = QHBoxLayout()
         self.plus = QPushButton('+', objectName='plus')
         self.plus.clicked.connect(self.zoom)
@@ -118,20 +120,21 @@ class Page(QMainWindow):
 
         self.moins.setEnabled(True)
 
-        self.signet = QPushButton('')
+        self.signet = QPushButton('', objectName="signet")
         self.signet.clicked.connect(self.addBookmark)
         self.buttonLayout.addWidget(self.previous)
         self.qh.addWidget(self.signet)
-        self.signet.setStyleSheet("color:white;background-color:black;border-radius:5px;")
-        icon = QPixmap("signet.png")
-        self.signet.setIcon(QIcon(icon))
-        self.signet.setIconSize(icon.size()*0.03)
+        self.icon = QPixmap("signet.png")
+        self.icon_hover = QPixmap("signet_hover.png")
+        self.signet.setIcon(QIcon(self.icon))
+
+        self.signet.setIconSize(self.icon.size()*0.03)
         self.signet.setMaximumHeight(30)
         self.signet.setMinimumHeight(30)
 
         self.pageLayout.addLayout(self.qh)
         self.pageLayout.addWidget(QLabel("<center>Utilisez les flêches directionnelles pour contrôler la liseuse !</center>"))
-        scsw = QScrollArea()
+        scsw = QScrollArea(objectName="scsw")
         w = QWidget()
         w.setLayout(self.sw)
         scsw.setWidget(w)
@@ -151,7 +154,6 @@ class Page(QMainWindow):
         self.pageLayout.addLayout(self.buttonLayout)
         self.stackedLayout.setCurrentIndex(self.pos)
         self.spin.setValue(self.pos)
-
 
 
     def addBookmark(self):
@@ -194,31 +196,22 @@ class Page(QMainWindow):
         if texte == '→':
             if self.pos == len(self.liste)-1:
                 self.previous.setEnabled(True)
-                self.previous.setStyleSheet("color:white; background-color:green;border-radius:5px;")
-                self.next.setStyleSheet("color:white; background-color:white;border-radius:5px;")
                 self.next.setEnabled(False)
                 pass
 
             else:
                 self.previous.setEnabled(True)
                 self.next.setEnabled(True)
-                self.previous.setStyleSheet("color:white; background-color:green;border-radius:5px;")
-                self.next.setStyleSheet("color:white; background-color:green;border-radius:5px;")
-
                 self.pos+=1
             self.spin.setValue(self.spin.value()+1)
         elif texte == '←' :
             if self.pos ==0:
                 self.next.setEnabled(True)
-                self.next.setStyleSheet("color:white; background-color:green;border-radius:5px;")
-                self.previous.setStyleSheet("color:white; background-color:white;border-radius:5px;")
                 self.previous.setEnabled(False)
                 pass
             else :
                 self.previous.setEnabled(True)
                 self.next.setEnabled(True)
-                self.previous.setStyleSheet("color:white; background-color:green;border-radius:5px;")
-                self.next.setStyleSheet("color:white; background-color:green;border-radius:5px;")
                 self.pos-=1
             self.spin.setValue(self.spin.value()-1)
         self.pos = self.spin.value()

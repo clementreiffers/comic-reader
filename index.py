@@ -563,7 +563,7 @@ QPushButton#plus:pressed {
 }
 QPushButton#moins {
     background-color: orange;
-    border-radius: 10px;        /* круглый */
+    border-radius: 10px;
 }
 
 QPushButton#moins:hover {
@@ -575,6 +575,32 @@ QPushButton#moins:hover {
 QPushButton#moins:pressed {
     background-color: red;
     border : none;
+}
+QPushButton#next:active, QPushButton#previous:active {
+    color:white;
+    background-color:green;
+    border-radius:25px;
+    font-size:20px;
+    padding:10px;
+    text-align: center;
+}
+QPushButton#next:hover, QPushButton#previous:hover {
+    color : green;
+    background-color : white;
+    border : 2px solid green;
+}
+QPushButton#next:disabled, QPushButton#previous:disabled {
+    color : transparent;
+    background-color : transparent;
+    border : 2px solid white;
+}
+QPushButton#signet {
+    color:white;
+    background-color:black;
+    border-radius:5px;
+}
+QScrollArea#scsw {
+    background-image : url('fond1.jpg');
 }
 '''
 app = QCoreApplication.instance()
