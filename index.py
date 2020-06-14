@@ -11,12 +11,13 @@ import os
 import shutil
 from PyQt5.QtWidgets import (QWidget,QApplication,QPushButton,QVBoxLayout,QFileDialog,QHBoxLayout)
 import pygame
-pygame.init()
 import webbrowser
 
 class FenetrePrincipale(QMainWindow):
     def __init__(self):
         super().__init__()
+        pygame.init()
+
         self.lire_css()
         self.setStyleSheet(self.StyleSheet)
 
@@ -46,7 +47,7 @@ class FenetrePrincipale(QMainWindow):
 
         actMusic = QAction(QIcon( "icons8-notes-de-musique-48.png" ), "&Open", self)
         actMusic.setStatusTip( "ouvrir le lecteur de musique" )
-        actMusic.triggered.connect(self.init)
+        actMusic.triggered.connect(self.addMu)
 
         toolbar = self.addToolBar( "Standard ToolBar" )
         toolbar.addAction( actOpen )
@@ -54,7 +55,6 @@ class FenetrePrincipale(QMainWindow):
         toolbar.addSeparator()
         toolbar.addAction( actExit )
         toolbar.addAction(actMusic)
-
 
         self.filename = ""
         self.BDtabs = [1]
@@ -99,7 +99,7 @@ class FenetrePrincipale(QMainWindow):
         self.prefe.setIcon(QIcon("icons8-faire-défiler-48.png"))
 
         self.music = QAction("Un peu de musique ?", self)
-        self.music.triggered.connect(self.init)
+        self.music.triggered.connect(self.addMu)
         self.music.setStatusTip("Pour ecouter de la musique")
         self.music.setIcon(QIcon("icons8-notes-de-musique-48.png"))
 
@@ -140,6 +140,7 @@ class FenetrePrincipale(QMainWindow):
         self.dl.setShortcut(QKeySequence("ctrl+d"))
         self.onglet.setShortcut(QKeySequence("ctrl+n"))
         self.music.setShortcut(QKeySequence("ctrl+m"))
+        self.prefe.setShortcut(QKeySequence("ctrl+,"))
 
         self.tabs=QTabWidget()
         self.tabs.setTabPosition(QTabWidget.North)
@@ -150,11 +151,15 @@ class FenetrePrincipale(QMainWindow):
         self.biblio = self.lire_bibliotheque()
         self.nouveaux_onglets()
 
+    def addMu(self):
+        self.BDtabs.append(2)
+        self.nomTabs.append("musique")
+        self.nouveaux_onglets()
 
     def addBi(self):
         self.BDtabs.append(1)
         self.nomTabs.append("bibliothèque")
-        self.afficher_onglets()
+        self.nouveaux_onglets()
 
     def download(self):
         webbrowser.open("http://www.openculture.com/2014/03/download-15000-free-golden-age-comics-from-the-digital-comic-museum.html")
@@ -184,12 +189,14 @@ class FenetrePrincipale(QMainWindow):
         self.tabs.tabCloseRequested.connect(self.closeTab)
         self.tabs.setMovable(True)
         for i in range(len(self.BDtabs)):
-            if self.BDtabs[i-1] != 1 :
+            if self.BDtabs[i-1] != 1 and self.BDtabs[i-1] != 2:
                 self.tabs.addTab(p.Page(self.BDtabs[i-1]), self.nomTabs[i-1])
-                self.setCentralWidget(self.tabs)
-            else :
+            elif self.BDtabs[i-1] == 1 :
                 self.tabs.addTab(self.afficher_biblio(), "Bibliothèque")
-                self.setCentralWidget(self.tabs)
+            else :
+                print("j")
+                self.tabs.addTab(self.init(), "Musique")
+        self.setCentralWidget(self.tabs)
 
     def au_revoir(self):
         partir = QAction('&Exit',self)
@@ -488,7 +495,7 @@ class FenetrePrincipale(QMainWindow):
         self.playsound = None
         self.pause = None
 
-        self.yolo()
+        return self.yolo()
 
     def yolo(self):
         self.titre = QLabel("aucun titre sélectionné")
@@ -536,15 +543,14 @@ class FenetrePrincipale(QMainWindow):
         pygame.mixer.music.play()
 
     def pref(self):
-        images = os.listdir('fonds')
+        images = os.listdir('fonds_btn')
         gridLayout = QGridLayout()
         n = 0
-        positions = [(i,j) for i in range(1,int(len(images))) for j in range(3)]
+        positions = [(i,j) for i in range(1,int(len(images))) for j in range(10)]
         for i in range(len(images)) :
-            img = QPixmap('fonds/'+images[i])
-            btn = QPushButton(images[i])
-            btn.setStyleSheet("font-size:1px;")
-            btn.clicked.connect(self.edit_css)
+            img = QPixmap('fonds_btn/'+images[i])
+            btn = QRadioButton(images[i], objectName='changeStyle')
+            btn.clicked.connect(self.edit_css_texture_scroll_btn)
             size = 100
             btn.setMaximumWidth(size)
             btn.setMaximumHeight(size)
@@ -552,27 +558,85 @@ class FenetrePrincipale(QMainWindow):
             btn.setIconSize(QSize(size, size))
 
             gridLayout.addWidget(btn, *positions[i])
+
+        images = os.listdir('fonds_img')
+        gridLayout2 = QGridLayout()
+        n = 0
+        positions = [(i,j) for i in range(1,int(len(images))) for j in range(10)]
+        for i in range(len(images)) :
+            img = QPixmap('fonds_img/'+images[i])
+            btn = QRadioButton(images[i], objectName='changeStyle')
+            btn.clicked.connect(self.edit_css_texture_scroll_img)
+            size = 100
+            btn.setMaximumWidth(size)
+            btn.setMaximumHeight(size)
+            btn.setIcon(QIcon(img))
+            btn.setIconSize(QSize(size, size))
+
+            gridLayout2.addWidget(btn, *positions[i])
+
+        images = os.listdir('fonds_btn')
+        gridLayout3 = QGridLayout()
+        n = 0
+        positions = [(i,j) for i in range(1,int(len(images))) for j in range(8)]
+        for i in range(len(images)) :
+            img = QPixmap('fonds_btn/'+images[i])
+            btn = QRadioButton(images[i], objectName='changeStyle')
+            btn.clicked.connect(self.edit_css_texture_interface)
+            size = 100
+            btn.setMaximumWidth(size)
+            btn.setMaximumHeight(size)
+            btn.setIcon(QIcon(img))
+            btn.setIconSize(QSize(size, size))
+
+            gridLayout3.addWidget(btn, *positions[i])
         qv = QVBoxLayout()
-        qv.addWidget(QLabel("<center>fond du choix des numéros de page \n N.B. : vous pouvez rajouter vous même des images si vous le voulez dans le dossier fonds</center>"))
+        qv.addWidget(QLabel("<br><center>N.B. : <br> 1. vous pouvez rajouter vous même des images si vous le voulez dans le dossier fonds <br> 2. Vos préférences se mettront à jour à la fermeture de la liseuse<br><br><font color=red>POUR LES FONDS DU SCROLLING DES BOUTONS :</font></center>"))
         qv.addLayout(gridLayout)
+        qv.addWidget(QLabel("<br><font color=red><center>POUR MODIFIER LES FONDS DE L'AFFICHAGE DE L'IMAGE :</center></font>"))
+        qv.addLayout(gridLayout2)
+        
+        qv.addWidget(QLabel("<br><font color=red><center>POUR MODIFIER LE FOND DE L'INTERFACE :</center></font>"))
+        qv.addLayout(gridLayout3)
+        
         wid = QWidget()
         wid.setLayout(qv)
-        self.setCentralWidget(wid)
+        sc = QScrollArea()
+        sc.setWidget(wid)
+        sc.setAlignment(Qt.AlignCenter)
+        self.setCentralWidget(sc)
 
     def lire_css(self):
         file = open("stylesheet_general.css", 'r')
         file2 = open("stylesheet_qscrollarea_btn.css", 'r')
-        self.StyleSheet = file.read() + file2.read()
-        print(self.StyleSheet)
+        file3 = open("stylesheet_qscrollarea_img.css", 'r')
+        file4 = open("stylesheet_interface.css", 'r')
+        self.StyleSheet = file.read() + file2.read() + file3.read() + file4.read()
         file.close()
+        file2.close()
+        file3.close()
+        file4.close()
 
-    def edit_css(self):
+    def edit_css_texture_scroll_btn(self):
         file = open("stylesheet_qscrollarea_btn.css", 'w')
-        style = '''QScrollArea#scsw {background-image : url('fonds/''' + self.sender().text() +'''');}'''
+        style = '''QScrollArea#scsw {background-image : url('fonds_btn/''' + self.sender().text() +'''');}'''
         file.write(style)
         file.close()
         self.lire_css()
-        self.afficher_onglets()
+
+    def edit_css_texture_scroll_img(self):
+        file = open("stylesheet_qscrollarea_img.css", 'w')
+        style = '''QScrollArea#scroll {background-image : url('fonds_img/''' + self.sender().text() +'''');}'''
+        file.write(style)
+        file.close()
+        self.lire_css()
+
+    def edit_css_texture_interface(self):
+        file = open("stylesheet_interface.css", 'w')
+        style = '''QWidget#page {background-image : url('fonds_img/''' + self.sender().text() +'''');}'''
+        file.write(style)
+        file.close()
+        self.lire_css()
 
 def printArray(T):
     for i in T :

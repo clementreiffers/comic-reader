@@ -68,7 +68,7 @@ class Page(QMainWindow):
             self.stackedLayout.addWidget(self.label)
 
 
-        self.widget = QWidget()
+        self.widget = QWidget(objectName="page")
         self.widget.setLayout(self.pageLayout)
         self.setCentralWidget(self.widget)
 
@@ -87,7 +87,7 @@ class Page(QMainWindow):
         self.spin = QSpinBox()
         self.spin.setMaximum(len(self.liste)-1)
         self.spin.setMinimum(0)
-        self.spin.setMinimumWidth(self.width())
+        self.spin.setMinimumWidth(1000)
         self.spin.valueChanged.connect(self.changerPage)
         self.buttonLayout.addWidget(self.spin)
 
@@ -107,6 +107,8 @@ class Page(QMainWindow):
         self.plus.clicked.connect(self.zoom)
         self.plus.setMaximumHeight(30)
         self.plus.setMinimumHeight(30)
+        self.plus.setMaximumWidth(420)
+        self.plus.setMinimumWidth(420)
 
 
         self.plus.setEnabled(True)
@@ -115,6 +117,8 @@ class Page(QMainWindow):
         self.moins.clicked.connect(self.zoom)
         self.moins.setMaximumHeight(30)
         self.moins.setMinimumHeight(30)
+        self.moins.setMaximumWidth(420)
+        self.moins.setMinimumWidth(420)
         self.qh.addWidget(self.moins)
         self.qh.addWidget(self.plus)
 
@@ -131,6 +135,8 @@ class Page(QMainWindow):
         self.signet.setIconSize(self.icon.size()*0.03)
         self.signet.setMaximumHeight(30)
         self.signet.setMinimumHeight(30)
+        self.signet.setMaximumWidth(420)
+        self.signet.setMinimumWidth(420)
 
         self.pageLayout.addLayout(self.qh)
         self.pageLayout.addWidget(QLabel("<center>Utilisez les flêches directionnelles pour contrôler la liseuse !</center>"))
@@ -145,8 +151,7 @@ class Page(QMainWindow):
         wid = QWidget()
         wid.setLayout(qh2)
         self.pageLayout.addWidget(wid)
-        self.scroll = QScrollArea()
-        self.scroll.setBackgroundRole(QPalette.Dark)
+        self.scroll = QScrollArea(objectName='scroll')
         w = QWidget()
         w.setLayout(self.stackedLayout)
         self.scroll.setWidget(w)
@@ -198,8 +203,6 @@ class Page(QMainWindow):
             if self.pos == len(self.liste)-1:
                 self.previous.setEnabled(True)
                 self.next.setEnabled(False)
-                pass
-
             else:
                 self.previous.setEnabled(True)
                 self.next.setEnabled(True)
@@ -209,7 +212,6 @@ class Page(QMainWindow):
             if self.pos ==0:
                 self.next.setEnabled(True)
                 self.previous.setEnabled(False)
-                pass
             else :
                 self.previous.setEnabled(True)
                 self.next.setEnabled(True)

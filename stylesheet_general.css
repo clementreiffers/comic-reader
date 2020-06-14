@@ -46,10 +46,18 @@ QPushButton#next:hover, QPushButton#previous:hover {
 QPushButton#next:disabled, QPushButton#previous:disabled {
   color : transparent;
   background-color : transparent;
-  border : 2px solid white;
+  border : 2px solid transparent;
 }
 QPushButton#signet {
   color:white;
   background-color:black;
   border-radius:5px;
+}
+QPushButton#changeStyle {
+  font-size: 1px;
+  border: none;
+  color: transparent;
+}
+QWidget#page{
+  background-color:grey;
 }
