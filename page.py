@@ -137,6 +137,7 @@ class Page(QMainWindow):
         scsw = QScrollArea(objectName="scsw")
         w = QWidget()
         w.setLayout(self.sw)
+        w.setStyleSheet('background-color:transparent;')
         scsw.setWidget(w)
         scsw.setMaximumWidth(80)
         qh2 = QHBoxLayout()

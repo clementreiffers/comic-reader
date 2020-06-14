@@ -17,6 +17,9 @@ import webbrowser
 class FenetrePrincipale(QMainWindow):
     def __init__(self):
         super().__init__()
+        self.lire_css()
+        self.setStyleSheet(self.StyleSheet)
+
 
         self.setWindowTitle('Liseuse')
         self.setGeometry(200, 200, 1140, 500)
@@ -90,6 +93,11 @@ class FenetrePrincipale(QMainWindow):
         self.onglet.setStatusTip("Pour afficher les onglets")
         self.onglet.setIcon(QIcon("icons8-faire-défiler-48.png"))
 
+        self.prefe = QAction("Préférences", self)
+        self.prefe.triggered.connect(self.pref)
+        self.prefe.setStatusTip("Personnalisez votre interface")
+        self.prefe.setIcon(QIcon("icons8-faire-défiler-48.png"))
+
         self.music = QAction("Un peu de musique ?", self)
         self.music.triggered.connect(self.init)
         self.music.setStatusTip("Pour ecouter de la musique")
@@ -114,6 +122,7 @@ class FenetrePrincipale(QMainWindow):
 
         self.menuAffichage = self.barreDeMenu.addMenu("&Affichage")
         self.menuAffichage.addAction(self.onglet)
+        self.menuAffichage.addAction(self.prefe)
         self.menuAffichage.addSeparator()
 
         self.menuAide = self.barreDeMenu.addMenu("&Aide")
@@ -422,7 +431,6 @@ class FenetrePrincipale(QMainWindow):
                 if j == self.filename :
                     self.book = T.index(i)
                     break
-        print(self.book)
         self.tableWidget.removeRow(self.book)
         self.T.pop(self.book)
         file = open("biblio.txt", "w")
@@ -521,12 +529,48 @@ class FenetrePrincipale(QMainWindow):
         file_name = QFileDialog.getOpenFileName(self,"Open",os.getenv("HOME"))
         self.data1 = file_name[0]
         self.titre.setText(file_name[0])
-        print('j')
 
     def play_the_songs(self):
         self.playsound = pygame.mixer.init()
         pygame.mixer.music.load(self.data1)
         pygame.mixer.music.play()
+
+    def pref(self):
+        images = os.listdir('fonds')
+        gridLayout = QGridLayout()
+        n = 0
+        for i in range(len(images)) :
+            img = QPixmap('fonds/'+images[i])
+            btn = QPushButton(images[i])
+            btn.setStyleSheet("font-size:1px;")
+            btn.clicked.connect(self.edit_css)
+            size = 200
+            btn.setMaximumWidth(size)
+            btn.setMaximumHeight(size)
+            btn.setIcon(QIcon(img))
+            btn.setIconSize(QSize(size, size))
+
+            gridLayout.addWidget(btn, n, i)
+        qv = QVBoxLayout()
+        qv.addWidget(QLabel("<center>fond du choix des numéros de page \n N.B. : vous pouvez rajouter vous même des images si vous le voulez dans le dossier fonds</center>"))
+        qv.addLayout(gridLayout)
+        wid = QWidget()
+        wid.setLayout(qv)
+        self.setCentralWidget(wid)
+
+    def lire_css(self):
+        file = open("stylesheet_general.css", 'r')
+        file2 = open("stylesheet_qscrollarea_btn.css", 'r')
+        self.StyleSheet = file.read() + file2.read()
+        print(self.StyleSheet)
+        file.close()
+
+    def edit_css(self):
+        file = open("stylesheet_qscrollarea_btn.css", 'w')
+        style = '''QScrollArea#scsw {background-image : url('fonds/''' + self.sender().text() +'''');}'''
+        file.write(style)
+        file.close()
+        self.lire_css()
 
 def printArray(T):
     for i in T :
@@ -542,74 +586,12 @@ def checkFileExistance(filePath):
         return False
 
 
-StyleSheet = '''
-QPushButton#plus {
-    color:white;
-    font-size:15px;
-    border-radius:10px;
-    background-color:#1d57ff;
-
-}
-
-QPushButton#plus:hover {
-    background-color: white;
-    border : 2px solid #1d57ff;
-    color: #1d57ff;
-}
-
-QPushButton#plus:pressed {
-    background-color: red;
-    border : none;
-}
-QPushButton#moins {
-    background-color: orange;
-    border-radius: 10px;
-}
-
-QPushButton#moins:hover {
-    background-color: white;
-    border : 2px solid orange;
-    color: orange;
-}
-
-QPushButton#moins:pressed {
-    background-color: red;
-    border : none;
-}
-QPushButton#next:active, QPushButton#previous:active {
-    color:white;
-    background-color:green;
-    border-radius:25px;
-    font-size:20px;
-    padding:10px;
-    text-align: center;
-}
-QPushButton#next:hover, QPushButton#previous:hover {
-    color : green;
-    background-color : white;
-    border : 2px solid green;
-}
-QPushButton#next:disabled, QPushButton#previous:disabled {
-    color : transparent;
-    background-color : transparent;
-    border : 2px solid white;
-}
-QPushButton#signet {
-    color:white;
-    background-color:black;
-    border-radius:5px;
-}
-QScrollArea#scsw {
-    background-image : url('fond1.jpg');
-}
-'''
 app = QCoreApplication.instance()
 
 if app == None:
     app = QApplication([''])
 
 window = FenetrePrincipale()
-window.setStyleSheet(StyleSheet)
 window.show()
 
 app.exec()
