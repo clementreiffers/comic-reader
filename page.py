@@ -15,7 +15,12 @@ class Page(QMainWindow):
             for j in i :
             	if j == self.filename :
                     self.book = T.index(i)
-        self.pos = int(T[self.book][8])
+        n = 0
+        for i in T[self.book]:
+        	if n==8:
+        		self.pos = int(i)
+        	n+=1
+        #self.pos = int(T[self.book][7])
         self.pos_dep = self.pos
         self.pos_av = self.pos
 
@@ -55,7 +60,7 @@ class Page(QMainWindow):
             btn = QPushButton(str(a))
             btn.setStyleSheet(self.btn_page_no_visit_and_no_bookmark)
             self.btn.append(btn)
-            if a == int(self.T[self.book][8]):
+            if a == self.pos:
                 self.btn[a].setStyleSheet(self.btn_bookmark)
             btn.setMaximumWidth(40)
             btn.clicked.connect(self.changerPageAvecBtn)
@@ -143,7 +148,7 @@ class Page(QMainWindow):
 
 
         self.pageLayout.addLayout(self.qh)
-        self.pageLayout.addWidget(QLabel("<center>Utilisez les flêches directionnelles pour contrôler la liseuse !</center>"))
+        self.pageLayout.addWidget(QLabel("<center><font style='background-color:white;font-weight:bold;font-size:15px;'>Utilisez les flêches directionnelles pour contrôler la liseuse !</font></center>"))
         scsw = QScrollArea(objectName="scsw")
         w = QWidget()
         w.setLayout(self.sw)

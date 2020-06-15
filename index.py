@@ -141,11 +141,12 @@ class FenetrePrincipale(QMainWindow):
         self.music.setShortcut(QKeySequence("ctrl+m"))
         self.prefe.setShortcut(QKeySequence("ctrl+,"))
 
-        self.tabs=QTabWidget()
+        self.tabs=QTabWidget(objectName='tab')
         self.tabs.setTabPosition(QTabWidget.North)
         self.tabs.setTabsClosable(True)
         self.tabs.tabCloseRequested.connect(self.download)
         self.tabs.setMovable(True)
+        self.tabs.setTabShape(QTabWidget.Triangular)
 
         self.biblio = self.lire_bibliotheque()
         self.nouveaux_onglets()
@@ -187,14 +188,18 @@ class FenetrePrincipale(QMainWindow):
         self.tabs.setTabsClosable(True)
         self.tabs.tabCloseRequested.connect(self.closeTab)
         self.tabs.setMovable(True)
+        self.tabs.setTabShape(QTabWidget.Triangular)
         for i in range(len(self.BDtabs)):
             if self.BDtabs[i-1] != 1 and self.BDtabs[i-1] != 2:
                 self.tabs.addTab(p.Page(self.BDtabs[i-1]), self.nomTabs[i-1])
+                self.tabs.setTabIcon(i,QIcon(QPixmap('icons8-bande-dessinée-48.png')))
             elif self.BDtabs[i-1] == 1 :
                 self.tabs.addTab(self.afficher_biblio(), "Bibliothèque")
+                self.tabs.setTabIcon(i,QIcon(QPixmap('biblio.png')))
             else :
-                print("j")
                 self.tabs.addTab(self.init(), "Musique")
+                self.tabs.setTabIcon(i,QIcon(QPixmap('icons8-notes-de-musique-48.png')))
+
         self.setCentralWidget(self.tabs)
 
     def au_revoir(self):
@@ -219,6 +224,7 @@ class FenetrePrincipale(QMainWindow):
     def afficher_onglets(self):
         try :
             self.tabs.addTab(p.Page(self.BDtabs[-1]), self.nomTabs[-1])
+            self.tabs.setTabIcon(len(BDtabs)-1,QIcon(QPixmap('icons8-bande-dessinée-48.png')))
             self.setCentralWidget(self.tabs)
         except:
             self.nouveaux_onglets()
@@ -262,76 +268,87 @@ class FenetrePrincipale(QMainWindow):
             self.T = self.lire_bibliotheque()
             T = self.T
 
+        file = open("biblio.txt", "r")
+        if file.read() != '':
 
+            self.tableWidget = QTableWidget()
+            self.tableWidget.setColumnCount(11)
+            self.tableWidget.setRowCount(len(T))
+            self.tableWidget.setColumnWidth(0, 150)
+            self.tableWidget.setItem(0, 0, QTableWidgetItem("cover"))
+            self.tableWidget.setItem(0, 1, QTableWidgetItem("source"))
+            self.tableWidget.setItem(0, 2, QTableWidgetItem("title"))
+            self.tableWidget.setItem(0, 3 , QTableWidgetItem("author"))
+            self.tableWidget.setItem(0, 4 , QTableWidgetItem("creation_time"))
+            self.tableWidget.setItem(0, 5 , QTableWidgetItem("year"))
+            self.tableWidget.setItem(0, 6 , QTableWidgetItem("tags"))
+            self.tableWidget.setItem(0, 7 , QTableWidgetItem("quality"))
+            self.tableWidget.setItem(0, 8 , QTableWidgetItem("ouvrir"))
+            self.tableWidget.setItem(0, 9 , QTableWidgetItem("editer"))
+            self.tableWidget.setItem(0, 10 , QTableWidgetItem("delete"))
+            header = self.tableWidget.verticalHeader()
+            for i in range(len(T)-1):
+                self.btn = QAction("lire " + T[i][2], self)
+                self.btn.triggered.connect(self.lire)
+                self.btn.setStatusTip("Lire cette Ouvrage")
+                self.menuLire.addAction(self.btn)
 
-        self.tableWidget = QTableWidget()
-        self.tableWidget.setColumnCount(11)
-        self.tableWidget.setRowCount(len(T))
-        self.tableWidget.setColumnWidth(0, 150)
-        self.tableWidget.setItem(0, 0, QTableWidgetItem("cover"))
-        self.tableWidget.setItem(0, 1, QTableWidgetItem("source"))
-        self.tableWidget.setItem(0, 2, QTableWidgetItem("title"))
-        self.tableWidget.setItem(0, 3 , QTableWidgetItem("author"))
-        self.tableWidget.setItem(0, 4 , QTableWidgetItem("creation_time"))
-        self.tableWidget.setItem(0, 5 , QTableWidgetItem("year"))
-        self.tableWidget.setItem(0, 6 , QTableWidgetItem("tags"))
-        self.tableWidget.setItem(0, 7 , QTableWidgetItem("quality"))
-        self.tableWidget.setItem(0, 8 , QTableWidgetItem("ouvrir"))
-        self.tableWidget.setItem(0, 9 , QTableWidgetItem("editer"))
-        self.tableWidget.setItem(0, 10 , QTableWidgetItem("delete"))
-        header = self.tableWidget.verticalHeader()
-        for i in range(len(T)-1):
-            self.btn = QAction("lire " + T[i][2], self)
-            self.btn.triggered.connect(self.lire)
-            self.btn.setStatusTip("Lire cette Ouvrage")
-            self.menuLire.addAction(self.btn)
+                for j in range(len(T[i])+3):
+                    if j == 0 :
 
-            for j in range(len(T[i])+3):
-                if j == 0 :
+                        info = QVBoxLayout()
+                        h = QHBoxLayout()
+                        n = 0
+                        txt = ''
+                        self.label = QLabel()
+                        self.pixmap= QPixmap("./"+str(T[i][2])+ "/" + T[i][0])
+                        self.scaledPixmap= self.pixmap.scaledToWidth(self.width() * 0.1)
+                        self.label.setPixmap(self.scaledPixmap)
+                        info = QLabel(txt)
+                        h.addWidget(self.label)
+                        h.addWidget(info)
+                        widget = QWidget()
+                        widget.setLayout(h)
+                        self.tableWidget.setCellWidget(i+1, j, widget)
+                        header.setSectionResizeMode(i+1, QHeaderView.Stretch)
 
-                    info = QVBoxLayout()
-                    h = QHBoxLayout()
-                    n = 0
-                    txt = ''
-                    self.label = QLabel()
-                    self.pixmap= QPixmap("./"+str(T[i][2])+ "/" + T[i][0])
-                    self.scaledPixmap= self.pixmap.scaledToWidth(self.width() * 0.1)
-                    self.label.setPixmap(self.scaledPixmap)
-                    info = QLabel(txt)
-                    h.addWidget(self.label)
-                    h.addWidget(info)
-                    widget = QWidget()
-                    widget.setLayout(h)
-                    self.tableWidget.setCellWidget(i+1, j, widget)
-                    header.setSectionResizeMode(i+1, QHeaderView.Stretch)
+                    elif j == len(T[i])-1:
+                        self.btn = QPushButton("lire\n" + str(T[i][2]))
+                        self.btn.clicked.connect(self.lire)
+                        self.tableWidget.setCellWidget(i+1, j, self.btn)
 
-                elif j == len(T[i])-1:
-                    self.btn = QPushButton("lire\n" + str(T[i][2]))
-                    self.btn.clicked.connect(self.lire)
-                    self.tableWidget.setCellWidget(i+1, j, self.btn)
+                    elif j == len(T[i]):
+                        self.btn = QPushButton("editer\n"+ str(T[i][2]))
+                        self.btn.clicked.connect(self.editer)
+                        self.tableWidget.setCellWidget(i+1, j, self.btn)
 
-                elif j == len(T[i]):
-                    self.btn = QPushButton("editer\n"+ str(T[i][2]))
-                    self.btn.clicked.connect(self.editer)
-                    self.tableWidget.setCellWidget(i+1, j, self.btn)
+                    elif j == len(T[i])+1:
+                        self.btn = QPushButton("supprimer\n"+ str(T[i][2]))
+                        self.btn.clicked.connect(self.delete)
+                        self.tableWidget.setCellWidget(i+1, j, self.btn)
 
-                elif j == len(T[i])+1:
-                    self.btn = QPushButton("supprimer\n"+ str(T[i][2]))
-                    self.btn.clicked.connect(self.delete)
-                    self.tableWidget.setCellWidget(i+1, j, self.btn)
-
-                elif j<len(T[i]):
-                    self.tableWidget.setItem(i+1, j, QTableWidgetItem(T[i][j]))
-            self.vBoxLayout = QVBoxLayout()
-            self.vBoxLayout.addWidget(self.tableWidget)
-            widget = QWidget()
-            widget.setLayout(self.vBoxLayout)
-            self.setCentralWidget(widget)
-            widget.setObjectName('page')
-        try :
-            return widget
-        except:
-            ...
+                    elif j<len(T[i]):
+                        self.tableWidget.setItem(i+1, j, QTableWidgetItem(T[i][j]))
+                self.vBoxLayout = QVBoxLayout()
+                self.vBoxLayout.addWidget(self.tableWidget)
+                widget = QWidget()
+                widget.setLayout(self.vBoxLayout)
+                self.setCentralWidget(widget)
+                widget.setObjectName('page')
+            try :
+                return widget
+            except:
+                ...
+        else :
+            qv = QVBoxLayout()
+            qv.addWidget(QLabel(''))
+            btn = QPushButton('Ajoutez des BD à votre bibliothèque ! appuyez ici ou faites ctrl + o', objectName='nada')
+            btn.clicked.connect(self.charger)
+            qv.addWidget(btn)
+            qv.addWidget(QLabel(''))
+            wid = QWidget()
+            wid.setLayout(qv)
+            return wid
 
     def editer(self):
         texte = self.sender().text()
@@ -431,6 +448,7 @@ class FenetrePrincipale(QMainWindow):
 
     def delete(self):
         texte = self.sender().text()
+        
         self.filename = texte[10:len(texte)]
         T = self.T
         for i in T :
@@ -439,12 +457,24 @@ class FenetrePrincipale(QMainWindow):
                     self.book = T.index(i)
                     break
         self.tableWidget.removeRow(self.book)
+
         self.T.pop(self.book)
+        print(self.nomTabs)
+        if self.filename in self.nomTabs :
+            a_sup = self.nomTabs.index(self.filename)
+            self.BDtabs.pop(a_sup)
+            self.nomTabs.pop(a_sup)
+
         file = open("biblio.txt", "w")
         for i in range(len(self.T)-1):
             biblio = file.write(str(self.T[i][0]) + "$" + str(self.T[i][1]) + "$" + str(self.T[i][2]) + "$" + str(self.T[i][3]) + "$" + str(self.T[i][4]) + "$" + str(self.T[i][5]) + "$" + str(self.T[i][6]) + "$" + str(self.T[i][7]) + "\n")
         file.close()
-        shutil.rmtree(self.filename)
+        
+        try :
+            shutil.rmtree(self.filename)
+        except :
+            ...
+        
         self.afficher_onglets()
 
 
@@ -464,7 +494,7 @@ class FenetrePrincipale(QMainWindow):
                 if i == "/" : break
                 nom += i
             nom = nom[::-1]
-            self.nomTabs.append(nom)
+            self.nomTabs.append(nom[0:len(self.nomTabs)-4])
             self.BDtabs.append(1)
             self.nomTabs.append("bibliothèque")
             self.afficher_onglets()

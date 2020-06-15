@@ -4,10 +4,11 @@ QPushButton#plus {
         border-radius:10px;
         background-color:#1d57ff;
 
+
 }
 
 QPushButton#plus:hover {
-  background-color: white;
+  background-color: transparent;
   border : 2px solid #1d57ff;
   color: #1d57ff;
 }
@@ -18,10 +19,11 @@ QPushButton#plus:pressed {
 QPushButton#moins {
   background-color: orange;
   border-radius: 10px;
+
 }
 
 QPushButton#moins:hover {
-  background-color: white;
+  background-color: transparent;
   border : 2px solid orange;
   color: orange;
 }
@@ -60,4 +62,18 @@ QPushButton#changeStyle {
 }
 QWidget#page{
   background-color:grey;
+}
+QPushButton#nada {
+  font-size: 25px;
+  color: white;
+  background-color: #4C41F8;
+  border: 10px inset #4C41F8;
+  border-radius: 20px;
+}
+QPushButton#nada:hover {
+  background-color: #DC41F8;
+  border: 10px outset #DC41F8;
+}
+QTabWidget#tab {
+  background-color: red;
 }
