@@ -197,6 +197,8 @@ class Page(QMainWindow):
     def changerPageAvecBtn(self):
         self.pos = int(self.sender().text())
         self.stackedLayout.setCurrentIndex(self.pos)
+        self.chang()
+    def chang(self):
         for i in self.btn :
             i.setStyleSheet(self.btn_page_no_visit_and_no_bookmark)
             self.btn[self.pos].setStyleSheet(self.btn_visit)
@@ -228,23 +230,8 @@ class Page(QMainWindow):
             self.spin.setValue(self.spin.value()-1)
         self.pos = self.spin.value()
         self.stackedLayout.setCurrentIndex(self.pos)
-        self.btn[self.pos_dep].setStyleSheet(self.btn_bookmark)
 
-        for i in self.btn :
-            if self.pos != self.pos_dep :
-                i.setStyleSheet(self.btn_page_no_visit_and_no_bookmark)
-                self.btn[self.pos].setStyleSheet(self.btn_visit)
-        self.btn[self.pos_dep].setStyleSheet(self.btn_bookmark)
-
-        if self.pos != self.pos_dep :
-            self.btn[self.pos].setStyleSheet(self.btn_visit)
-        else :
-            self.btn[self.pos].setStyleSheet(self.btn_bookmark_visit)
-
-        if self.pos -1!= self.pos_dep and self.pos-1>=0:
-            self.btn[self.pos-1].setStyleSheet(self.btn_page_no_visit_and_no_bookmark)
-        if self.pos +1!= self.pos_dep and self.pos+1<=len(self.livre.read_book())-1:
-            self.btn[self.pos+1].setStyleSheet(self.btn_page_no_visit_and_no_bookmark)
+        self.chang()
 
 
     def zoom(self):

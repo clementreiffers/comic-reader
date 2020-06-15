@@ -59,6 +59,8 @@ class FenetrePrincipale(QMainWindow):
         self.BDtabs = [1]
         self.nomTabs = ["bibliothèque"]
 
+        self.intMenuLire = []
+
         self.toolbar = QToolBar("Bar d'outils")
         self.addToolBar(self.toolbar)
 
@@ -152,14 +154,16 @@ class FenetrePrincipale(QMainWindow):
         self.nouveaux_onglets()
 
     def addMu(self):
-        self.BDtabs.append(2)
-        self.nomTabs.append("musique")
-        self.nouveaux_onglets()
+        if 2 not in self.BDtabs :
+            self.BDtabs.append(2)
+            self.nomTabs.append("musique")
+            self.nouveaux_onglets()
 
     def addBi(self):
-        self.BDtabs.append(1)
-        self.nomTabs.append("bibliothèque")
-        self.nouveaux_onglets()
+        if 1 not in self.BDtabs :
+            self.BDtabs.append(1)
+            self.nomTabs.append("bibliothèque")
+            self.nouveaux_onglets()
 
     def download(self):
         webbrowser.open("http://www.openculture.com/2014/03/download-15000-free-golden-age-comics-from-the-digital-comic-museum.html")
@@ -288,10 +292,12 @@ class FenetrePrincipale(QMainWindow):
             self.tableWidget.setItem(0, 10 , QTableWidgetItem("delete"))
             header = self.tableWidget.verticalHeader()
             for i in range(len(T)-1):
-                self.btn = QAction("lire " + T[i][2], self)
-                self.btn.triggered.connect(self.lire)
-                self.btn.setStatusTip("Lire cette Ouvrage")
-                self.menuLire.addAction(self.btn)
+                if T[i][2] not in self.intMenuLire:
+                    self.btn = QAction("lire " + T[i][2], self)
+                    self.btn.triggered.connect(self.lire)
+                    self.btn.setStatusTip("Lire cette Ouvrage")
+                    self.menuLire.addAction(self.btn)
+                    self.intMenuLire.append(T[i][2])
 
                 for j in range(len(T[i])+3):
                     if j == 0 :
