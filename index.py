@@ -465,7 +465,6 @@ class FenetrePrincipale(QMainWindow):
         self.tableWidget.removeRow(self.book)
 
         self.T.pop(self.book)
-        print(self.nomTabs)
         if self.filename in self.nomTabs :
             a_sup = self.nomTabs.index(self.filename)
             self.BDtabs.pop(a_sup)
