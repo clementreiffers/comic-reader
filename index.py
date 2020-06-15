@@ -588,7 +588,8 @@ class FenetrePrincipale(QMainWindow):
             btn.setIconSize(QSize(size, size))
 
             gridLayout.addWidget(btn, *positions[i])
-
+        grp = QGroupBox('POUR LES FONDS DU SCROLLING DES BOUTONS :')
+        grp.setLayout(gridLayout)
         images = os.listdir('fonds_img')
         gridLayout2 = QGridLayout()
         n = 0
@@ -604,7 +605,8 @@ class FenetrePrincipale(QMainWindow):
             btn.setIconSize(QSize(size, size))
 
             gridLayout2.addWidget(btn, *positions[i])
-
+        grp2 = QGroupBox("POUR MODIFIER LES FONDS DE L'AFFICHAGE DE L'IMAGE :")
+        grp2.setLayout(gridLayout2)
         images = os.listdir('fonds_sys')
         gridLayout3 = QGridLayout()
         n = 0
@@ -620,14 +622,13 @@ class FenetrePrincipale(QMainWindow):
             btn.setIconSize(QSize(size, size))
 
             gridLayout3.addWidget(btn, *positions[i])
+        grp3 = QGroupBox("POUR MODIFIER LE FOND DE L'INTERFACE :")
+        grp3.setLayout(gridLayout3)
         qv = QVBoxLayout()
-        qv.addWidget(QLabel("<br><center>N.B. : <br> 1. vous pouvez rajouter vous même des images si vous le voulez dans le dossier fonds <br> 2. Vos préférences se mettront à jour à la fermeture de la liseuse<br><br><font color=red>POUR LES FONDS DU SCROLLING DES BOUTONS :</font></center>"))
-        qv.addLayout(gridLayout)
-        qv.addWidget(QLabel("<br><font color=red><center>POUR MODIFIER LES FONDS DE L'AFFICHAGE DE L'IMAGE :</center></font>"))
-        qv.addLayout(gridLayout2)
-        
-        qv.addWidget(QLabel("<br><font color=red><center>POUR MODIFIER LE FOND DE L'INTERFACE :</center></font>"))
-        qv.addLayout(gridLayout3)
+        qv.addWidget(QLabel("<br><center>N.B. : <br> 1. vous pouvez rajouter vous même des images si vous le voulez dans le dossier fonds <br> 2. Vos préférences se mettront à jour à la fermeture de la liseuse<</center>"))
+        qv.addWidget(grp)
+        qv.addWidget(grp2)
+        qv.addWidget(grp3)
         
         wid = QWidget()
         wid.setLayout(qv)
