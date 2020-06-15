@@ -4,22 +4,22 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 import comics as c
 import page as p
+import musique as m
 import sys
 import subprocess
 from PyQt5 import QtGui
 import os
+from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
 import shutil
 from PyQt5.QtWidgets import (QWidget,QApplication,QPushButton,QVBoxLayout,QFileDialog,QHBoxLayout)
-import pygame
-import webbrowser
 
-class FenetrePrincipale(QMainWindow):
+class FenetrePrincipale(QMainWindow) :
     def __init__(self):
         super().__init__()
-        pygame.init()
         self.setObjectName('page')
         self.lire_css()
         self.setStyleSheet(self.StyleSheet)
+        self.setStyle(QStyleFactory.create("Fusion"))
 
         self.setWindowTitle('Liseuse')
         self.setGeometry(200, 200, 1140, 500)
@@ -527,55 +527,90 @@ class FenetrePrincipale(QMainWindow):
         self.nomTabs.append(nom)
         self.afficher_onglets()
     def init(self):
-        self.playsound = None
-        self.pause = None
+        self.wid = QWidget()
 
-        return self.yolo()
+        self.mediaPlayer = QMediaPlayer(None, QMediaPlayer.VideoSurface)
 
-    def yolo(self):
-        self.titre = QLabel("aucun titre sélectionné")
-        self.song1 = QPushButton("charger une musique")
-        self.pause = QPushButton("||")
-        self.play_it = QPushButton("►")
-        h_box = QHBoxLayout()
-        h_box.addWidget(self.song1)
-        h_box.addWidget(self.play_it)
-        h_box.addWidget(self.pause)
-        v_box = QVBoxLayout()
-        v_box.addWidget(self.titre)
-        v_box.addLayout(h_box)
+        openBtn = QPushButton('charger une musique')
+        openBtn.clicked.connect(self.open_file)
 
-        wid = QWidget()
-        wid.setLayout(v_box)
+        self.playBtn = QPushButton()
+        self.playBtn.setEnabled(False)
+        self.playBtn.setIcon(self.style().standardIcon(QStyle.SP_MediaPlay))
+        self.playBtn.clicked.connect(self.play_video)
 
-        wid.setWindowTitle("Song Mixer 1.0")
+        self.slider = QSlider(Qt.Horizontal)
+        self.slider.setRange(0,0)
+        self.slider.sliderMoved.connect(self.set_position)
 
-        self.song1.clicked.connect(self.song1_open)
-        self.pause.clicked.connect(self.pause_the_songs)
-        self.play_it.clicked.connect(self.play_the_songs)
+        self.label = QLabel()
+        self.label.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Maximum)
 
-        self.setCentralWidget(wid)
-        return wid
+        hboxLayout = QHBoxLayout()
+        hboxLayout.setContentsMargins(0,0,0,0)
 
-    def pause_the_songs(self):
-        if self.playsound is None:
-            self.pause.setText("UnPause")
-            self.playsound = "pause"
-            pygame.mixer.music.pause()
+        hboxLayout.addWidget(openBtn)
+        hboxLayout.addWidget(self.playBtn)
+        hboxLayout.addWidget(self.slider)
+
+        vboxLayout = QVBoxLayout()
+        vboxLayout.addLayout(hboxLayout)
+        vboxLayout.addWidget(self.label)
+
+        self.wid.setLayout(vboxLayout)
+
+        self.mediaPlayer.stateChanged.connect(self.mediastate_changed)
+        self.mediaPlayer.positionChanged.connect(self.position_changed)
+        self.mediaPlayer.durationChanged.connect(self.duration_changed)
+
+        return self.wid
+
+
+    def open_file(self):
+        filename, _ = QFileDialog.getOpenFileName(self, "Open Video")
+
+        if filename != '':
+            self.mediaPlayer.setMedia(QMediaContent(QUrl.fromLocalFile(filename)))
+            self.playBtn.setEnabled(True)
+
+
+    def play_video(self):
+        if self.mediaPlayer.state() == QMediaPlayer.PlayingState:
+            self.mediaPlayer.pause()
+
         else:
-            self.pause.setText("Pause")
-            self.playsound = None
-            pygame.mixer.music.unpause()
+            self.mediaPlayer.play()
 
-    def song1_open(self):
-        file_name = QFileDialog.getOpenFileName(self,"Open",os.getenv("HOME"))
-        self.data1 = file_name[0]
-        self.titre.setText(file_name[0])
 
-    def play_the_songs(self):
-        self.playsound = pygame.mixer.init()
-        pygame.mixer.music.load(self.data1)
-        pygame.mixer.music.play()
+    def mediastate_changed(self, state):
+        if self.mediaPlayer.state() == QMediaPlayer.PlayingState:
+            self.playBtn.setIcon(
+                self.style().standardIcon(QStyle.SP_MediaPause)
+
+            )
+
+        else:
+            self.playBtn.setIcon(
+                self.style().standardIcon(QStyle.SP_MediaPlay)
+
+            )
+
+    def position_changed(self, position):
+        self.slider.setValue(position)
+
+
+    def duration_changed(self, duration):
+        self.slider.setRange(0, duration)
+
+
+    def set_position(self, position):
+        self.mediaPlayer.setPosition(position)
+
+
+    def handle_errors(self):
+        self.playBtn.setEnabled(False)
+        self.label.setText("Error: " + self.mediaPlayer.errorString())
+
 
     def pref(self):
         images = os.listdir('fonds_btn')
