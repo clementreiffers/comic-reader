@@ -4,7 +4,6 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 import comics as c
 import page as p
-import musique as m
 import sys
 import subprocess
 from PyQt5 import QtGui
@@ -25,6 +24,8 @@ class FenetrePrincipale(QMainWindow) :
         self.setGeometry(200, 200, 1140, 500)
         self.setWindowIcon(QtGui.QIcon('spidermanicon.png'))
         self.setGeometry(200, 200, 1200, 500)
+
+        self.titre_mus = None
 
 
         actOpen = QAction( QIcon( "icons8-fichier-48.png" ), "&Open", self )
@@ -533,7 +534,7 @@ class FenetrePrincipale(QMainWindow) :
 
         openBtn = QPushButton('charger une musique')
         openBtn.clicked.connect(self.open_file)
-
+        openBtn.setShortcut(QKeySequence('ctrl + shift + o'))
         self.playBtn = QPushButton()
         self.playBtn.setEnabled(False)
         self.playBtn.setIcon(self.style().standardIcon(QStyle.SP_MediaPlay))
@@ -554,7 +555,11 @@ class FenetrePrincipale(QMainWindow) :
         hboxLayout.addWidget(self.slider)
 
         vboxLayout = QVBoxLayout()
+        vboxLayout.addWidget(self.afficher_dos_mus())
+        self.titre_mus_aff = QLabel('')
+        vboxLayout.addWidget(self.titre_mus_aff)
         vboxLayout.addLayout(hboxLayout)
+        vboxLayout.addWidget(QLabel("CONSEIL : ouvrez d'abord vos BD et à la fin votre musique"))
         vboxLayout.addWidget(self.label)
 
         self.wid.setLayout(vboxLayout)
@@ -565,6 +570,52 @@ class FenetrePrincipale(QMainWindow) :
 
         return self.wid
 
+    def afficher_dos_mus(self):
+        musiques = os.listdir('Music')
+        self.tableau = QTableWidget()
+        self.tableau.setColumnCount(2)
+        self.tableau.setRowCount(len(musiques)+1)
+        self.tableau.setColumnWidth(0, self.width()*5/6)
+        self.tableau.setColumnWidth(1, self.width()*1/6)
+
+
+        self.tableau.setItem(0, 0, QTableWidgetItem("titres"))
+        self.tableau.setItem(0, 1, QTableWidgetItem("pour supprimer"))
+
+        n = 1
+
+        self.title_mus = []
+        
+        for i in musiques :
+            self.title_mus.append(i)
+            btn = QPushButton(i)
+            btn.clicked.connect(self.play_music)
+            btn_sup = QPushButton("supprimer " + i)
+            btn_sup.clicked.connect(self.sup_music)
+            self.tableau.setCellWidget(n, 0, btn)
+            self.tableau.setCellWidget(n, 1, btn_sup)
+            n+=1
+        
+        return self.tableau
+
+    def sup_music(self):
+        self.titre_mus = self.sender().text()[10::]
+        try :
+            a = self.title_mus.index(self.titre_mus)+2
+            print(a)
+            self.titre_mus = "./Music/"+ self.titre_mus
+            os.remove(self.titre_mus)
+            self.tableau.removeRow(a-1)
+            self.title_mus.pop(a)
+        except:
+            ...
+
+
+    def play_music(self):
+        self.titre_mus = "Music/"+self.sender().text()
+        self.titre_mus_aff.setText("<center>"+self.sender().text()+"</center>")
+        self.mediaPlayer.setMedia(QMediaContent(QUrl.fromLocalFile(self.titre_mus)))
+        self.playBtn.setEnabled(True)
 
     def open_file(self):
         filename, _ = QFileDialog.getOpenFileName(self, "Open Video")
@@ -572,6 +623,9 @@ class FenetrePrincipale(QMainWindow) :
         if filename != '':
             self.mediaPlayer.setMedia(QMediaContent(QUrl.fromLocalFile(filename)))
             self.playBtn.setEnabled(True)
+            self.titre_mus_aff.setText("<center>"+filename+"</center>")
+            shutil.copy(filename, 'Music')
+        self.nouveaux_onglets()
 
 
     def play_video(self):
